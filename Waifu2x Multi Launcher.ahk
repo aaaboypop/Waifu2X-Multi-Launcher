@@ -1,17 +1,20 @@
 ; default setting
-in_path := "D:\exp" ; input folder
-out_path := "F:\F_DATA\output" ; output folder
-noise_level := 2 ; noise level [0-3]
-scale := "2.0"
-
 process_limit := 8
 
+IniRead, in_path, %A_WorkingDir%\setting.ini, main, in_path,
+IniRead, out_path, %A_WorkingDir%\setting.ini, main, out_path,
+IniRead, noise_level, %A_WorkingDir%\setting.ini, main, noise_level, 2
+IniRead, scale, %A_WorkingDir%\setting.ini, main, scale, 2
+IniRead, win_mode, %A_WorkingDir%\setting.ini, main, win_mode, Hide
+IniRead, config_ext, %A_WorkingDir%\setting.ini, main, config_ext, png
+
+
 Gui, Add, Text, x12 y9 w80 h20 , Input Folder :
-Gui, Add, Edit, x102 y9 w210 h20 vin_path ggui_update, %in_path%
+Gui, Add, Edit, x102 y9 w180 h20 vin_path ggui_update, %in_path%
 Gui, Add, Text, x12 y39 w80 h20 , Output Folder :
-Gui, Add, Edit, x102 y39 w210 h20 vout_path ggui_update, %out_path%
+Gui, Add, Edit, x102 y39 w180 h20 vout_path ggui_update, %out_path%
 Gui, Add, Text, x12 y69 w80 h20 , Scale :
-Gui, Add, Edit, x102 y69 w210 h20 vscale ggui_update, %scale%
+Gui, Add, Edit, x102 y69 w180 h20 vscale ggui_update, %scale%
 Gui, Add, Text, x12 y99 w80 h20 , Noise Level :
 Gui, Add, Radio, x102 y99 w30 h20 vnlv0 Group ggui_update, 0
 Gui, Add, Radio, x142 y99 w30 h20 vnlv1 ggui_update, 1
@@ -20,42 +23,44 @@ Gui, Add, Radio, x222 y99 w30 h20 vnlv3 ggui_update, 3
 Gui, Add, Text, x12 y129 w90 h20 , File Extension :
 Gui, Add, DropDownList, x102 y129 w50 h20 vconfig_ext r11 ggui_update, .png|.bmp|.jpg||.jp2|.sr|.tif|.hdr|.exr|.ppm|.webp|.tga
 Gui, Add, CheckBox, x12 y159 w90 h20 vskip_exist Checked ggui_update, Skip Exist File
-Gui, Add, CheckBox, x12 y179 w180 h20 vs_test ggui_update Checked, Show Speed
+Gui, Add, CheckBox, x12 y179 w100 h20 vs_test ggui_update Checked, Show Speed
+Gui, Add, Text, x192 y179 w40 h20 , Mode :
+Gui, Add, DropDownList, x252 y179 w50 h20 vwin_mode r6 ggui_update, |Max|Min|Hide||
 
 Gui, Add, GroupBox, x12 y209 w310 h110 , GPU Setting
-Gui, Add, Text, x32 y229 w60 h20 vtconfig_gpu1, Process 1 :
-Gui, Add, DropDownList, x92 y229 w50 h20 vconfig_gpu1 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, Text, x32 y249 w60 h20 vtconfig_gpu2, Process 2 :
-Gui, Add, DropDownList, x92 y249 w50 h20 vconfig_gpu2 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, Text, x32 y269 w60 h20 vtconfig_gpu3, Process 3 :
-Gui, Add, DropDownList, x92 y269 w50 h20 vconfig_gpu3 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, Text, x32 y289 w60 h20 vtconfig_gpu4, Process 4 :
-Gui, Add, DropDownList, x92 y289 w50 h20 vconfig_gpu4 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, Text, x182 y229 w60 h20 vtconfig_gpu5, Process 5 :
-Gui, Add, DropDownList, x242 y229 w50 h20 vconfig_gpu5 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, Text, x182 y249 w60 h20 vtconfig_gpu6, Process 6 :
-Gui, Add, DropDownList, x242 y249 w50 h20 vconfig_gpu6 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, Text, x182 y269 w60 h20 vtconfig_gpu7, Process 7 :
-Gui, Add, DropDownList, x242 y269 w50 h20 vconfig_gpu7 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, Text, x182 y289 w60 h20 vtconfig_gpu8, Process 8 :
-Gui, Add, DropDownList, x242 y289 w50 h20 vconfig_gpu8 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, Text, x42 y229 w60 h20 vtconfig_gpu1, Process 1 :
+Gui, Add, DropDownList, x102 y229 w50 h20 vconfig_gpu1 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, Text, x42 y249 w60 h20 vtconfig_gpu2, Process 2 :
+Gui, Add, DropDownList, x102 y249 w50 h20 vconfig_gpu2 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, Text, x42 y269 w60 h20 vtconfig_gpu3, Process 3 :
+Gui, Add, DropDownList, x102 y269 w50 h20 vconfig_gpu3 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, Text, x42 y289 w60 h20 vtconfig_gpu4, Process 4 :
+Gui, Add, DropDownList, x102 y289 w50 h20 vconfig_gpu4 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, Text, x192 y229 w60 h20 vtconfig_gpu5, Process 5 :
+Gui, Add, DropDownList, x252 y229 w50 h20 vconfig_gpu5 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, Text, x192 y249 w60 h20 vtconfig_gpu6, Process 6 :
+Gui, Add, DropDownList, x252 y249 w50 h20 vconfig_gpu6 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, Text, x192 y269 w60 h20 vtconfig_gpu7, Process 7 :
+Gui, Add, DropDownList, x252 y269 w50 h20 vconfig_gpu7 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, Text, x192 y289 w60 h20 vtconfig_gpu8, Process 8 :
+Gui, Add, DropDownList, x252 y289 w50 h20 vconfig_gpu8 r8 ggui_update, 0||1|2|3|4|5|6|7
 
-Gui, Add, CheckBox, x12 y227 w20 h20 venable_process1 checked ggui_update, 
-Gui, Add, CheckBox, x12 y247 w20 h20 venable_process2 ggui_update, 
-Gui, Add, CheckBox, x12 y267 w20 h20 venable_process3 ggui_update, 
-Gui, Add, CheckBox, x12 y287 w20 h20 venable_process4 ggui_update, 
-Gui, Add, CheckBox, x162 y227 w20 h20 venable_process5 ggui_update, 
-Gui, Add, CheckBox, x162 y247 w20 h20 venable_process6 ggui_update, 
-Gui, Add, CheckBox, x162 y267 w20 h20 venable_process7 ggui_update, 
-Gui, Add, CheckBox, x162 y287 w20 h20 venable_process8 ggui_update, 
+Gui, Add, CheckBox, x22 y227 w20 h20 venable_process1 checked ggui_update, 
+Gui, Add, CheckBox, x22 y247 w20 h20 venable_process2 ggui_update, 
+Gui, Add, CheckBox, x22 y267 w20 h20 venable_process3 ggui_update, 
+Gui, Add, CheckBox, x22 y287 w20 h20 venable_process4 ggui_update, 
+Gui, Add, CheckBox, x172 y227 w20 h20 venable_process5 ggui_update, 
+Gui, Add, CheckBox, x172 y247 w20 h20 venable_process6 ggui_update, 
+Gui, Add, CheckBox, x172 y267 w20 h20 venable_process7 ggui_update, 
+Gui, Add, CheckBox, x172 y287 w20 h20 venable_process8 ggui_update, 
 
-Gui, Add, Edit, x12 y319 w310 h80 -VScroll vl_com Disabled,
+Gui, Add, Edit, x12 y319 w310 h80 -VScroll vl_com,
 
 ;==== Status ====
 Gui, Add, GroupBox, x332 y9 w550 h510 , Status
 Gui, Add, Text, x342 y29 w60 h20 , Total Files :
 Gui, Add, Text, x432 y29 w70 h20 vf_total, -
-Gui, Add, Text, x342 y49 w80 h20 , Processed Files :
+Gui, Add, Text, x342 y49 w80 h20 , Processing Files :
 Gui, Add, Text, x432 y49 w70 h20 vf_pp, -
 
 Gui, Add, Text, x552 y29 w40 h20 , Speed :
@@ -100,26 +105,21 @@ Gui, Add, Picture, x602 y389 w120 h120 vpic7,
 Gui, Add, Picture, x732 y389 w120 h120 vpic8, 
 
 ;==== Button ====
+Gui, Add, Button, x282 y9 w30 h20 gin_folder, ...
+Gui, Add, Button, x282 y39 w30 h20 gout_folder, ...
 Gui, Add, Text, x12 y409 w70 h20 vs_s, Ready ..
-Gui, Add, button, x12 y439 w170 h20 vb_start grun_start, Start
-Gui, Add, button, x12 y469 w170 h20 vb_stop grun_stop Disabled, Stop
+Gui, Add, button, x12 y439 w150 h20 vb_start grun_start, Start
+Gui, Add, button, x12 y469 w150 h20 vb_stop grun_stop Disabled, Stop
+Gui, Add, button, x242 y399 w80 h20 gsave, Save Setting
 Gui, Add, button, x12 y509 w100 h20 gexit, Exit
+
+Gui, Add, Text, x652 y519 w240 h20, by pond_pop @ www.facebook.com/Net4Anime
 
 ;==== Control ====
 GuiControl,,nlv%noise_level%, 1
-GuiControl,Disabled,config_gpu3
-GuiControl,Disabled,tconfig_gpu3
-GuiControl,Disabled,config_gpu4
-GuiControl,Disabled,tconfig_gpu4
-GuiControl,Disabled,config_gpu5
-GuiControl,Disabled,tconfig_gpu5
-GuiControl,Disabled,config_gpu6
-GuiControl,Disabled,tconfig_gpu6
-GuiControl,Disabled,config_gpu7
-GuiControl,Disabled,tconfig_gpu7
-GuiControl,Disabled,config_gpu8
-GuiControl,Disabled,tconfig_gpu8
 GuiControl,Hide,mgpu_text
+GuiControl, ChooseString, config_ext, %config_ext%
+
 Gui, Submit, NoHide
 
 i:=1
@@ -172,6 +172,34 @@ gui_update:
 }
 return
 
+save:
+{
+	IniWrite, %in_path%, %A_WorkingDir%\setting.ini, main, in_path
+	IniWrite, %out_path%, %A_WorkingDir%\setting.ini, main, out_path
+	IniWrite, %noise_level%, %A_WorkingDir%\setting.ini, main, noise_level
+	IniWrite, %scale%, %A_WorkingDir%\setting.ini, main, scale
+	IniWrite, %win_mode%, %A_WorkingDir%\setting.ini, main, win_mode
+	IniWrite, %config_ext%, %A_WorkingDir%\setting.ini, main, config_ext
+}
+return
+
+in_folder:
+{
+	Thread, NoTimers
+	FileSelectFolder, in_path,, 3
+	Thread, NoTimers, false
+	GuiControl,,in_path,%in_path%
+}
+Return
+
+out_folder:
+{
+	Thread, NoTimers
+	FileSelectFolder, out_path,, 3
+	Thread, NoTimers, false
+	GuiControl,,out_path,%out_path%
+}
+Return
 
 run_start:
 {
@@ -259,7 +287,7 @@ run_start:
 				p_cycle += 1
 				If p_cycle > %process_limit%
 				{
-					Sleep, 200
+					Sleep, 100
 					p_cycle := 1
 				}
 				
@@ -273,8 +301,9 @@ run_start:
 				{
 					break
 				}
-				
-				IfWinNotExist, %A_WorkingDir%\waifu2x-caffe-cui-p%p_cycle%.exe
+				process_name := "waifu2x-caffe-cui-p" p_cycle ".exe"
+				Process, Exist, %process_name%
+				If (!ErrorLevel= 1)
 				{
 					IfNotExist, %out_path%%sub_dir%
 					{
@@ -282,8 +311,8 @@ run_start:
 					}
 					gpu_select := config_gpu%p_cycle%
 					
-					run_command := """" A_WorkingDir "\waifu2x-caffe-cui-p" p_cycle ".exe "" --gpu " gpu_select " -p cudnn -s " scale " -n " noise_level " -m noise_scale -i """ A_LoopFilePath """ -o """ out_path sub_dir "\" out_filename config_ext """"
-					Run, %run_command%, , min
+					run_command := """" A_WorkingDir "\waifu2x-caffe-cui-p" p_cycle ".exe"" --gpu " gpu_select " -p cudnn -s " scale " -n " noise_level " -m noise_scale -i """ A_LoopFilePath """ -o """ out_path sub_dir "\" out_filename config_ext """"
+					Run, %run_command%, ,%win_mode%
 					GuiControl,,l_com,%run_command%
 					GuiControl,,s_file_process%p_cycle%,%A_LoopFilePath%
 					GuiControl,,pic%p_cycle%,%A_LoopFilePath%
