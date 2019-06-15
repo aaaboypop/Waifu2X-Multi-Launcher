@@ -8,6 +8,19 @@ IniRead, scale, %A_WorkingDir%\setting.ini, main, scale, 2
 IniRead, win_mode, %A_WorkingDir%\setting.ini, main, win_mode, Hide
 IniRead, config_ext, %A_WorkingDir%\setting.ini, main, config_ext, png
 
+Loop, Files, %A_WorkingDir%\models\*info.json, FR
+{
+	model_trim_l := StrLen(A_WorkingDir) + 8
+	StringTrimLeft, add_list, A_LoopFilePath, %model_trim_l%
+	StringTrimRight, add_list, add_list, 10
+	if(!model_list)
+	{
+		model_list := add_list
+		continue
+	}
+	model_list := model_list "|" add_list
+}
+
 ; input/out path
 Gui, Add, Text, x12 y9 w80 h20 , Input Folder :
 Gui, Add, Edit, x102 y9 w180 h20 vin_path ggui_update, %in_path%
@@ -31,6 +44,10 @@ Gui, Add, CheckBox, x12 y239 w90 h20 vskip_exist Checked ggui_update, Skip Exist
 ; mode config
 Gui, Add, Text, x12 y209 w40 h20 , Mode :
 Gui, Add, DropDownList, x102 y209 w50 h20 vwin_mode r6 ggui_update, |Max|Min|Hide||
+Gui, Add, DropDownList, x102 y239 w50 h20 vsleep_time r10 ggui_update, 10|20|50|100||200|333|500|1000
+GuiControl,Hide,sleep_time
+Gui, Add, Text, x12 y269 w40 h20 , Model :
+Gui, Add, DropDownList, x102 y269 w180 h20 vmodel r10 ggui_update, %model_list%
 
 ; output scale config
 Gui, Add, Radio, x12 y59 w80 h20 Group vby_scale Checked ggui_update, Scale
@@ -137,59 +154,10 @@ GuiControl,,nlv%noise_level%, 1
 GuiControl,Hide,mgpu_text
 GuiControl, ChooseString, config_ext, %config_ext%
 
-Gui, Submit, NoHide
-
-i:=1
-while(i<=8)
-{
-	if (process_limit < i)
-	{
-		GuiControl,Disable,config_gpu%i%
-		GuiControl,Disable,tconfig_gpu%i%
-	}
-	else
-	{
-		GuiControl,Enabled,config_gpu%i%
-		GuiControl,Enabled,tconfig_gpu%i%
-	}
-	i++
-}
-
-if(by_scale = 1)
-{
-	GuiControl,Enabled,scale
-	GuiControl,Disable,width
-	GuiControl,Disable,height
-	GuiControl,Disable,width1
-	GuiControl,Disable,height1
-}
-else if(by_width = 1)
-{
-	GuiControl,Disable,scale
-	GuiControl,Enabled,width
-	GuiControl,Disable,height
-	GuiControl,Disable,width1
-	GuiControl,Disable,height1
-}
-else if(by_height = 1)
-{
-	GuiControl,Disable,scale
-	GuiControl,Disable,width
-	GuiControl,Enabled,height
-	GuiControl,Disable,width1
-	GuiControl,Disable,height1
-}
-else if(by_w_h = 1)
-{
-	GuiControl,Disable,scale
-	GuiControl,Disable,width
-	GuiControl,Disable,height
-	GuiControl,Enabled,width1
-	GuiControl,Enabled,height1
-}
 
 ;==== GUI Window ====
 Gui, Show, x345 y137 h539 w895, Waifu2x Multi Launcher
+goto, gui_update
 Return
 
 
@@ -219,6 +187,7 @@ gui_update:
 		i++
 	}
 	
+
 	if(by_scale = 1)
 	{
 		GuiControl,Enabled,scale
@@ -310,6 +279,54 @@ run_start:
 	GuiControl,Disable,b_start
 	GuiControl,Enabled,b_stop
 	
+	GuiControl,Disable,scale
+	GuiControl,Disable,width
+	GuiControl,Disable,height
+	GuiControl,Disable,width1
+	GuiControl,Disable,height1
+	
+	if(by_scale = 1)
+	{
+		if scale is alpha
+		{
+			msgbox, Scale must not alphabetic characters
+			stop := 1
+		}
+		attribute1 := "-s " scale
+	}
+	else if(by_width = 1)
+	{
+		if width is alpha
+		{
+			msgbox, Width must not alphabetic characters
+			stop := 1
+		}
+		attribute1 := "-w " width
+	}
+	else if(by_height = 1)
+	{
+		if height is alpha
+		{
+			msgbox, Height must not alphabetic characters
+			stop := 1
+		}
+		attribute1 := "-h " height
+	}
+	else
+	{
+		if width1 is alpha
+		{
+			msgbox, Width1 must not alphabetic characters
+			stop := 1
+		}
+		if height1 is alpha
+		{
+			msgbox, Height1 must not alphabetic characters
+			stop := 1
+		}
+		attribute1 := "-w " width1 " -h " height1
+	}
+	
 	Loop, Files, %in_path%\*.*, FR
 	{
 		if A_LoopFileExt in png,jpg,jpeg,tif,tiff,bmp,tga
@@ -318,6 +335,14 @@ run_start:
 		}
 	}
 
+	if(!model)
+	{
+		attribute2 := ""
+	}
+	else
+	{
+		attribute2 := " --model_dir """ A_WorkingDir "\models\" model """"
+	}
 	
 	GuiControl,,f_total,%f_count%
 	
@@ -370,7 +395,7 @@ run_start:
 				p_cycle += 1
 				If p_cycle > %process_limit%
 				{
-					Sleep, 100
+					Sleep, %sleep_time%
 					p_cycle := 1
 				}
 				
@@ -393,23 +418,8 @@ run_start:
 						FileCreateDir, %out_path%%sub_dir%
 					}
 					gpu_select := config_gpu%p_cycle%
-					
-					if(by_scale = 1)
-					{
-						sub_command := "-s " scale
-					}
-					else if(by_width = 1)
-					{
-						sub_command := "-w " width
-					}else if(by_height = 1)
-					{
-						sub_command := "-h " height
-					}else if(by_w_h = 1)
-					{
-						sub_command := "-w " width " -h " height1
-					}
-					
-					run_command := """" A_WorkingDir "\waifu2x-caffe-cui-p" p_cycle ".exe"" --gpu " gpu_select " -p cudnn " sub_command " -n " noise_level " -m noise_scale -i """ A_LoopFilePath """ -o """ out_path sub_dir "\" out_filename config_ext """"
+
+					run_command := """" A_WorkingDir "\waifu2x-caffe-cui-p" p_cycle ".exe"" --gpu " gpu_select " -p cudnn " attribute1 attribute2 " -n " noise_level " -m noise_scale -i """ A_LoopFilePath """ -o """ out_path sub_dir "\" out_filename config_ext """"
 					Run, %run_command%, ,%win_mode%
 					GuiControl,,l_com,%run_command%
 					GuiControl,,s_file_process%p_cycle%,%A_LoopFilePath%
@@ -453,6 +463,7 @@ run_start:
 		per := (p_count/f_count)*100
 		GuiControl,,p_pro,%per%
 	}
+	goto, gui_update
 }
 return
 
