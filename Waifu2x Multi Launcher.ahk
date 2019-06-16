@@ -1,4 +1,4 @@
-; default setting
+; load setting
 process_limit := 8
 
 IniRead, in_path, %A_WorkingDir%\setting.ini, main, in_path, %A_Space%
@@ -7,6 +7,26 @@ IniRead, noise_level, %A_WorkingDir%\setting.ini, main, noise_level, 2
 IniRead, scale, %A_WorkingDir%\setting.ini, main, scale, 2
 IniRead, win_mode, %A_WorkingDir%\setting.ini, main, win_mode, Hide
 IniRead, config_ext, %A_WorkingDir%\setting.ini, main, config_ext, png
+IniRead, model, %A_WorkingDir%\setting.ini, main, model, %A_Space%
+IniRead, width, %A_WorkingDir%\setting.ini, main, width, %A_Space%
+IniRead, height, %A_WorkingDir%\setting.ini, main, height, %A_Space%
+IniRead, width1, %A_WorkingDir%\setting.ini, main, width1, %A_Space%
+IniRead, height1, %A_WorkingDir%\setting.ini, main, height1, %A_Space%
+IniRead, by_scale, %A_WorkingDir%\setting.ini, main, by_scale, 0
+IniRead, by_width, %A_WorkingDir%\setting.ini, main, by_width, 0
+IniRead, by_height, %A_WorkingDir%\setting.ini, main, by_height, 0
+IniRead, by_w_h, %A_WorkingDir%\setting.ini, main, by_w_h, 0
+IniRead, skip_exist, %A_WorkingDir%\setting.ini, main, skip_exist, 1
+IniRead, th_enable, %A_WorkingDir%\setting.ini, main, th_enable, 1
+IniRead, sleep_time, %A_WorkingDir%\setting.ini, main, sleep_time, 100
+
+i:=1
+while(i<=8)
+{
+	IniRead, config_gpu%i%, %A_WorkingDir%\setting.ini, main, config_gpu%i%, 0
+	IniRead, enable_process%i%, %A_WorkingDir%\setting.ini, main, enable_process%i%, 0
+	i++
+}
 
 Loop, Files, %A_WorkingDir%\models\*info.json, FR
 {
@@ -35,19 +55,21 @@ Gui, Add, Radio, x182 y149 w30 h20 vnlv2 ggui_update, 2
 Gui, Add, Radio, x222 y149 w30 h20 vnlv3 ggui_update, 3
 
 ; file ext config
-Gui, Add, Text, x12 y179 w90 h20 , File Extension :
-Gui, Add, DropDownList, x102 y179 w50 h20 vconfig_ext r11 ggui_update, .png|.bmp|.jpg||.jp2|.sr|.tif|.hdr|.exr|.ppm|.webp|.tga
+Gui, Add, Text, x12 y209 w90 h20 , File Extension :
+Gui, Add, DropDownList, x102 y209 w50 h20 vconfig_ext r11 ggui_update, .png|.bmp|.jpg||.jp2|.sr|.tif|.hdr|.exr|.ppm|.webp|.tga
 
 ; skip file
-Gui, Add, CheckBox, x12 y239 w90 h20 vskip_exist Checked ggui_update, Skip Exist File
+Gui, Add, CheckBox, x12 y269 w90 h20 vskip_exist Checked ggui_update, Skip Exist File
+Gui, Add, CheckBox, x172 y269 w70 h20 vth_enable Checked ggui_update, Thumbnail
 
 ; mode config
-Gui, Add, Text, x12 y209 w40 h20 , Mode :
-Gui, Add, DropDownList, x102 y209 w50 h20 vwin_mode r6 ggui_update, |Max|Min|Hide||
-Gui, Add, DropDownList, x102 y239 w50 h20 vsleep_time r10 ggui_update, 10|20|50|100||200|333|500|1000
-GuiControl,Hide,sleep_time
-Gui, Add, Text, x12 y269 w40 h20 , Model :
-Gui, Add, DropDownList, x102 y269 w180 h20 vmodel r10 ggui_update, %model_list%
+Gui, Add, Text, x12 y239 w40 h20 , Mode :
+Gui, Add, DropDownList, x102 y239 w50 h20 vwin_mode r6 ggui_update, |Max|Min|Hide||
+Gui, Add, Text, x192 y239 w40 h20 , Sleep :
+Gui, Add, DropDownList, x252 y239 w50 h20 vsleep_time r10 ggui_update, 10|20|50|100||200|333|500|1000
+
+Gui, Add, Text, x12 y179 w40 h20 , Model :
+Gui, Add, DropDownList, x102 y179 w180 h20 vmodel r10 ggui_update, %model_list%
 
 ; output scale config
 Gui, Add, Radio, x12 y59 w80 h20 Group vby_scale Checked ggui_update, Scale
@@ -55,11 +77,11 @@ Gui, Add, Radio, x12 y79 w80 h20 vby_width ggui_update, Width
 Gui, Add, Radio, x12 y99 w80 h20 vby_height ggui_update, Height
 Gui, Add, Radio, x12 y119 w80 h20 vby_w_h ggui_update, Width*Height
 Gui, Add, Edit, x102 y59 w150 h20 vscale ggui_update, %scale%
-Gui, Add, Edit, x102 y79 w150 h20 vwidth ggui_update, 
-Gui, Add, Edit, x102 y99 w150 h20 vheight ggui_update, 
-Gui, Add, Edit, x102 y119 w80 h20 vwidth1 ggui_update, 
+Gui, Add, Edit, x102 y79 w150 h20 vwidth ggui_update, %width%
+Gui, Add, Edit, x102 y99 w150 h20 vheight ggui_update, %height%
+Gui, Add, Edit, x102 y119 w80 h20 vwidth1 ggui_update, %width1%
 Gui, Add, Text, x192 y119 w10 h20, x
-Gui, Add, Edit, x202 y119 w80 h20 vheight1 ggui_update, 
+Gui, Add, Edit, x202 y119 w80 h20 vheight1 ggui_update, %height1%
 
 ; gpu config
 Gui, Add, GroupBox, x12 y299 w310 h110 , GPU Setting
@@ -151,9 +173,24 @@ Gui, Add, Text, x652 y519 w240 h20 , by pond_pop @ www.facebook.com/Net4Anime
 
 ;==== Control ====
 GuiControl,,nlv%noise_level%, 1
-GuiControl,Hide,mgpu_text
+GuiControl, Hide,mgpu_text
 GuiControl, ChooseString, config_ext, %config_ext%
+GuiControl, ChooseString, model, %model%
+GuiControl, ChooseString, sleep_time, %sleep_time%
+GuiControl,,skip_exist, %skip_exist%
+GuiControl,,th_enable, %th_enable%
+GuiControl,,by_scale, %by_scale%
+GuiControl,,by_width, %by_width%
+GuiControl,,by_height, %by_height%
+GuiControl,,by_w_h, %by_w_h%
 
+i:=1
+while(i<=8)
+{
+	GuiControl, ChooseString, config_gpu%i%,% config_gpu%i%
+	GuiControl,,enable_process%i%,% enable_process%i%
+	i++
+}
 
 ;==== GUI Window ====
 Gui, Show, x345 y137 h539 w895, Waifu2x Multi Launcher
@@ -187,6 +224,15 @@ gui_update:
 		i++
 	}
 	
+	if(th_enable = 0)
+	{
+		i:=1
+		while(i<=8)
+		{
+			GuiControl,Hide,pic%i%
+			i++
+		}
+	}
 
 	if(by_scale = 1)
 	{
@@ -232,6 +278,28 @@ save:
 	IniWrite, %scale%, %A_WorkingDir%\setting.ini, main, scale
 	IniWrite, %win_mode%, %A_WorkingDir%\setting.ini, main, win_mode
 	IniWrite, %config_ext%, %A_WorkingDir%\setting.ini, main, config_ext
+	IniWrite, %model%, %A_WorkingDir%\setting.ini, main, model
+	IniWrite, %width%, %A_WorkingDir%\setting.ini, main, width
+	IniWrite, %width1%, %A_WorkingDir%\setting.ini, main, width1
+	IniWrite, %height%, %A_WorkingDir%\setting.ini, main, height
+	IniWrite, %height1%, %A_WorkingDir%\setting.ini, main, height1
+	IniWrite, %by_scale%, %A_WorkingDir%\setting.ini, main, by_scale
+	IniWrite, %by_width%, %A_WorkingDir%\setting.ini, main, by_width
+	IniWrite, %by_height%, %A_WorkingDir%\setting.ini, main, by_height
+	IniWrite, %by_w_h%, %A_WorkingDir%\setting.ini, main, by_w_h
+	IniWrite, %skip_exist%, %A_WorkingDir%\setting.ini, main, skip_exist
+	IniWrite, %th_enable%, %A_WorkingDir%\setting.ini, main, th_enable
+	IniWrite, %sleep_time%, %A_WorkingDir%\setting.ini, main, sleep_time
+	
+	i:=1
+	while(i<=8)
+	{
+		var1 := config_gpu%i%
+		var2 := enable_process%i%
+		IniWrite, %var1%, %A_WorkingDir%\setting.ini, main, config_gpu%i%
+		IniWrite, %var2%, %A_WorkingDir%\setting.ini, main, enable_process%i%
+		i++
+	}
 }
 return
 
@@ -423,8 +491,11 @@ run_start:
 					Run, %run_command%, ,%win_mode%
 					GuiControl,,l_com,%run_command%
 					GuiControl,,s_file_process%p_cycle%,%A_LoopFilePath%
-					GuiControl,,pic%p_cycle%,%A_LoopFilePath%
-					GuiControl,Show,pic%p_cycle%
+					if(th_enable = 1)
+					{
+						GuiControl,,pic%p_cycle%,%A_LoopFilePath%
+						GuiControl,Show,pic%p_cycle%
+					}
 					s_process_count%p_cycle% += 1
 					dv := s_process_count%p_cycle%
 					GuiControl,,s_process_count%p_cycle%,%dv%
