@@ -2,6 +2,14 @@
 process_limit := 8
 thumbnail_max_size := 120
 
+model_name1 := "anime_style_art"
+model_name2 := "anime_style_art_rgb"
+model_name3 := "cunet"
+model_name4 := "photo"
+model_name5 := "upconv_7_anime_style_art_rgb"
+model_name6 := "upconv_7_photo"
+model_name7 := "upresnet10"
+
 IniRead, in_path, %A_WorkingDir%\setting.ini, main, in_path, %A_Space%
 IniRead, out_path, %A_WorkingDir%\setting.ini, main, out_path,  %A_Space%
 IniRead, noise_level, %A_WorkingDir%\setting.ini, main, noise_level, 2
@@ -42,6 +50,8 @@ Loop, Files, %A_WorkingDir%\models\*info.json, FR
 	model_list := model_list "|" add_list
 }
 
+StringReplace, model_list, model_list, |ukbench , , All
+
 ; input/out path
 Gui, Add, Text, x12 y9 w80 h20 , Input Folder :
 Gui, Add, Edit, x102 y9 w180 h20 vin_path ggui_update, %in_path%
@@ -54,6 +64,10 @@ Gui, Add, Radio, x102 y149 w30 h20 vnlv0 Group ggui_update, 0
 Gui, Add, Radio, x142 y149 w30 h20 vnlv1 ggui_update, 1
 Gui, Add, Radio, x182 y149 w30 h20 vnlv2 ggui_update, 2
 Gui, Add, Radio, x222 y149 w30 h20 vnlv3 ggui_update, 3
+
+; Splite Size
+;Gui, Add, CheckBox, x172 y209 w80 h20 vc_split ggui_update, Splite Size :
+;Gui, Add, Edit, x252 y209 w50 h20 vsplit_size ggui_update, 
 
 ; file ext config
 Gui, Add, Text, x12 y209 w90 h20 , File Extension :
@@ -169,8 +183,27 @@ Gui, Add, button, x122 y509 w120 h20 vb_stop grun_stop Disabled, Stop
 Gui, Add, button, x252 y509 w70 h20 gsave, Save Setting
 
 Gui, Add, Text, x12 y489 w70 h20 vs_s, Ready ..
-Gui, Add, Text, x652 y519 w240 h20 , by pond_pop @ www.facebook.com/Net4Anime
+Gui, Add, Text, x1042 y519 w240 h20 , by pond_pop @ www.facebook.com/Net4Anime
 
+; test
+Gui, Add, GroupBox, x892 y19 w380 h270 , Test Mode
+Gui, Add, GroupBox, x892 y49 w190 h200 , Model
+
+Gui, Add, CheckBox, x902 y69 w170 h20 vt_model1 ggui_update, anime_style_art
+Gui, Add, CheckBox, x902 y89 w170 h20 vt_model2 ggui_update, anime_style_art_rgb
+Gui, Add, CheckBox, x902 y109 w170 h20 vt_model3 ggui_update, cunet
+Gui, Add, CheckBox, x902 y129 w170 h20 vt_model4 ggui_update, photo
+Gui, Add, CheckBox, x902 y149 w170 h20 vt_model5 ggui_update, upconv_7_anime_style_art_rgb
+Gui, Add, CheckBox, x902 y169 w170 h20 vt_model6 ggui_update, upconv_7_photo
+Gui, Add, CheckBox, x902 y189 w170 h20 vt_model7 ggui_update, upresnet10
+
+Gui, Add, GroupBox, x1082 y49 w190 h200 , Noise Level
+Gui, Add, CheckBox, x1102 y69 w130 h20 vt_nlv0 ggui_update, Level 0
+Gui, Add, CheckBox, x1102 y89 w130 h20 vt_nlv1 ggui_update, Level 1
+Gui, Add, CheckBox, x1102 y109 w130 h20 vt_nlv2 ggui_update, Level 2
+Gui, Add, CheckBox, x1102 y129 w130 h20 vt_nlv3 ggui_update, Level 3
+
+Gui, Add, button, x902 y259 w100 h20 vb_start1 grun_test, Start
 
 ;==== Control ====
 GuiControl,,nlv%noise_level%, 1
@@ -194,7 +227,7 @@ while(i<=8)
 }
 
 ;==== GUI Window ====
-Gui, Show, x345 y137 h539 w895, Waifu2x Multi Launcher
+Gui, Show, x413 y187 h547 w1284, Waifu2x Multi Launcher
 goto, gui_update
 Return
 
@@ -291,6 +324,7 @@ save:
 	IniWrite, %skip_exist%, %A_WorkingDir%\setting.ini, main, skip_exist
 	IniWrite, %th_enable%, %A_WorkingDir%\setting.ini, main, th_enable
 	IniWrite, %sleep_time%, %A_WorkingDir%\setting.ini, main, sleep_time
+	IniWrite, %split_size%, %A_WorkingDir%\setting.ini, main, split_size
 	
 	i:=1
 	while(i<=8)
@@ -319,6 +353,268 @@ out_folder:
 	FileSelectFolder, out_path,, 3
 	Thread, NoTimers, false
 	GuiControl,,out_path,%out_path%
+}
+Return
+
+run_test:
+{
+	i:=1
+	while(i<=8)
+	{
+		s_process_count%i% := 0
+		GuiControl,,s_file_process%i%,-
+		GuiControl,,s_process_count%i%,-
+		GuiControl,Hide,pic%i%
+		i++
+	}
+	stop := 0
+	f_count := 0
+	p_count := 0
+	p_cycle := 0
+	gpu_select := 0
+	test_count := 0
+	last_files_skiping := 0
+	in_len := StrLen(in_path)
+	GuiControl,,s_s,Starting..
+	GuiControl,,f_total,Scaning..
+	GuiControl,,f_pp,0
+	GuiControl,,tspeed,-
+	GuiControl,Disable,b_start
+	GuiControl,Disable,b_start1
+	GuiControl,Enabled,b_stop
+	
+	GuiControl,Disable,scale
+	GuiControl,Disable,width
+	GuiControl,Disable,height
+	GuiControl,Disable,width1
+	GuiControl,Disable,height1
+	
+	if(by_scale = 1)
+	{
+		if scale is alpha
+		{
+			msgbox, Scale must not alphabetic characters
+			stop := 1
+		}
+		attribute1 := "-s " scale
+		ff := "-vf scale=iw*" scale ":ih*" scale
+	}
+	else if(by_width = 1)
+	{
+		if width is alpha
+		{
+			msgbox, Width must not alphabetic characters
+			stop := 1
+		}
+		attribute1 := "-w " width
+		ff := "-vf scale=" width ":-1"
+	}
+	else if(by_height = 1)
+	{
+		if height is alpha
+		{
+			msgbox, Height must not alphabetic characters
+			stop := 1
+		}
+		attribute1 := "-h " height
+		ff := "-vf scale=-1:"height
+	}
+	else
+	{
+		if width1 is alpha
+		{
+			msgbox, Width1 must not alphabetic characters
+			stop := 1
+		}
+		if height1 is alpha
+		{
+			msgbox, Height1 must not alphabetic characters
+			stop := 1
+		}
+		attribute1 := "-w " width1 " -h " height1
+		ff := "-vf scale=" width1 ":" height1
+	}
+	
+	Loop, Files, %in_path%\*.*, FR
+	{
+		if A_LoopFileExt in png,jpg,jpeg,tif,tiff,bmp,tga
+		{
+			f_count += 1
+		}
+	}
+	
+	m1 := 0
+	m2 := 0
+	x := 1
+	while (x<=7)
+	{
+		if(t_model%x% = 1)
+		{
+			m1 += 1
+		}
+		x++
+	}
+	
+	x := 0
+	while (x<=3)
+	{
+		if(t_nlv%x% = 1)
+		{
+			m2 += 1
+		}
+		x++
+	}
+	m3 := m1 * m2 * f_count
+	GuiControl,,f_total,%m3%
+	
+	Loop, Files, %in_path%\*.*, FR
+	{
+		if A_LoopFileExt in png,bmp,jpg,jp2,sr,tif,hdr,exr,ppm,webp,tga
+		{
+			if(stop = 1)
+			{
+				break
+			}
+			
+			StringTrimLeft, sub_dir, A_LoopFileDir, %in_len%
+			
+			if A_LoopFileExt in webp
+			{
+				StringTrimRight, out_filename, A_LoopFileName, 5
+			}
+			else
+			{
+				StringTrimRight, out_filename, A_LoopFileName, 4
+			}
+			
+			IfNotExist, %out_path%%sub_dir%\%out_filename%
+			{
+				FileCreateDir, %out_path%%sub_dir%\%out_filename%
+			}
+			run_command := """" A_WorkingDir "\bin\ffmpeg.exe"" -i """ A_LoopFilePath """ " ff " -sws_flags spline """ out_path sub_dir "\" out_filename "\" out_filename "_spline.png"""
+			Run, %run_command%, ,%win_mode%
+			GuiControl,,l_com,%run_command%
+			
+			m1_cycle := 1
+			while ( m1_cycle <= 7)
+			{
+				if(t_model%m1_cycle% = 0)
+				{
+					m1_cycle += 1
+					continue
+				}
+				
+				m2_cycle := 0
+				while ( m2_cycle <= 3)
+				{
+					if(t_nlv%m2_cycle% = 0)
+					{
+						m2_cycle += 1
+						continue
+					}
+				
+					p_count += 1
+
+					Loop
+					{
+						p_cycle += 1
+						If p_cycle > %process_limit%
+						{
+							Sleep, %sleep_time%
+							p_cycle := 1
+						}
+						
+						if(enable_process%p_cycle% = 0)
+						{
+							continue
+						}
+
+						if(stop = 1)
+						{
+							goto, stop
+						}
+						process_name := "waifu2x-caffe-cui-p" p_cycle ".exe"
+						Process, Exist, %process_name%
+						If (!ErrorLevel= 1)
+						{
+							gpu_select := config_gpu%p_cycle%
+							out_filename1 := out_filename "(" model_name%m1_cycle% ")_noise_level_" m2_cycle
+							attribute2 := " --model_dir """ A_WorkingDir "\models\" model_name%m1_cycle% """"
+							noise_level1 := m2_cycle
+							run_command := """" A_WorkingDir "\waifu2x-caffe-cui-p" p_cycle ".exe"" --gpu " gpu_select " -p cudnn " attribute1 attribute2 " -n " noise_level1 " -m noise_scale -i """ A_LoopFilePath """ -o """ out_path sub_dir "\" out_filename "\" out_filename1 config_ext """"
+							Run, %run_command%, ,%win_mode%
+							GuiControl,,l_com,%run_command%
+							GuiControl,,s_file_process%p_cycle%,%A_LoopFilePath%
+							if(th_enable = 1)
+							{
+								imagefile := A_LoopFilePath
+								GDIPToken := Gdip_Startup()                                     
+								pBM := Gdip_CreateBitmapFromFile( imagefile )
+								img_w:= Gdip_GetImageWidth( pBM )
+								img_h:= Gdip_GetImageHeight( pBM )   
+								Gdip_DisposeImage( pBM )
+								Gdip_Shutdown( GDIPToken ) 
+
+								if(img_w>img_h)
+								{
+									p_ratio := Floor(thumbnail_max_size/(img_w/img_h))
+									GuiControl,,pic%p_cycle%,%imagefile%
+									GuiControl, MoveDraw, pic%p_cycle%, w%thumbnail_max_size% h%p_ratio%
+								}
+								else
+								{
+									p_ratio := Floor(thumbnail_max_size/(img_h/img_w))
+									GuiControl,,pic%p_cycle%,%imagefile%
+									GuiControl, MoveDraw, pic%p_cycle%, w%p_ratio% h%thumbnail_max_size%
+								}
+								GuiControl,Show,pic%p_cycle%
+							}
+							s_process_count%p_cycle% += 1
+							dv := s_process_count%p_cycle%
+							GuiControl,,s_process_count%p_cycle%,%dv%
+							per := (p_count/m3)*100
+							GuiControl,,p_pro,%per%
+
+							test_count += 1
+							if (test_count = 1)
+							{
+								StartTime := A_TickCount
+							}
+							if test_count <= %process_limit%
+							{
+								break
+							}
+							ElapsedTime := A_TickCount - StartTime
+							t_sec := ElapsedTime/1000
+							speed := (test_count-process_limit)/t_sec
+							GuiControl,,tspeed,%speed%
+							Break
+						}
+					}
+					m2_cycle += 1
+				}
+				m1_cycle += 1
+			}
+		}
+	}
+	stop:
+	GuiControl,,f_pp,%p_count%
+	GuiControl,Enabled,b_start
+	GuiControl,Enabled,b_start1
+	GuiControl,Disable,b_stop
+	
+	if(stop = 1)
+	{
+		GuiControl,,s_s,Stopped
+	}
+	else
+	{
+		GuiControl,,s_s,Finished
+		per := (p_count/f_count)*100
+		GuiControl,,p_pro,%per%
+	}
+	goto, gui_update
+
 }
 Return
 
