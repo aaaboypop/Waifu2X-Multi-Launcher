@@ -73,7 +73,9 @@ Loop, Files, %A_WorkingDir%\models\*info.json, FR
 
 StringReplace, model_list, model_list, |ukbench , , All
 
-Gui, Add, Tab, x2 y0 w900 h570 , Launcher|Test Mode|Console Log
+Gui, Color, FFFFFF
+
+Gui, Add, Tab3, x2 y0 w900 h570 , Launcher|Test Mode|Console Log
 Gui, Tab, Launcher
 Gui, Add, Text, x22 y29 w80 h20 , Input Folder :
 Gui, Add, Edit, x112 y29 w180 h20 vin_path ggui_update, %in_path%
@@ -145,7 +147,7 @@ Gui, Add, Text, x562 y49 w40 h20 , Speed :
 Gui, Add, Text, x612 y49 w60 h20 vtspeed, -
 Gui, Add, Text, x682 y49 w50 h20 , fps
 Gui, Add, Text, x562 y69 w40 h20 vs_percen, 
-Gui, Add, Progress, x352 y89 w530 h10 Border vp_pro, 0
+Gui, Add, Progress, x352 y89 w530 h10 +cGreen Border vp_pro, 0
 Gui, Add, Text, x352 y109 w80 h20 , Process 1 :
 Gui, Add, Text, x442 y109 w380 h20 vs_file_process1, -
 Gui, Add, Text, x832 y109 w50 h20 vs_process_count1, -
