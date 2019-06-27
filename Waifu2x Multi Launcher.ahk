@@ -137,6 +137,8 @@ Gui, Add, Text, x432 y49 w70 h20 vf_pp, -
 Gui, Add, Text, x552 y29 w40 h20 , Speed :
 Gui, Add, Text, x602 y29 w60 h20 vtspeed, -
 Gui, Add, Text, x672 y29 w50 h20 , fps
+Gui, Add, Text, x552 y49 w40 h20 vs_percen,
+
 Gui, Add, Progress, x342 y69 w530 h10 Border vp_pro, 0
 
 ; process status
@@ -186,7 +188,7 @@ Gui, Add, Text, x12 y489 w70 h20 vs_s, Ready ..
 Gui, Add, Text, x1042 y519 w240 h20 , by pond_pop @ www.facebook.com/Net4Anime
 
 ; test
-Gui, Add, GroupBox, x892 y19 w380 h270 , Test Mode
+Gui, Add, GroupBox, x892 y19 w380 h300 , Test Mode
 Gui, Add, GroupBox, x892 y49 w190 h200 , Model
 
 Gui, Add, CheckBox, x902 y69 w170 h20 vt_model1 ggui_update, anime_style_art
@@ -203,7 +205,10 @@ Gui, Add, CheckBox, x1102 y89 w130 h20 vt_nlv1 ggui_update, Level 1
 Gui, Add, CheckBox, x1102 y109 w130 h20 vt_nlv2 ggui_update, Level 2
 Gui, Add, CheckBox, x1102 y129 w130 h20 vt_nlv3 ggui_update, Level 3
 
-Gui, Add, button, x902 y259 w100 h20 vb_start1 grun_test, Start
+Gui, Add, Text, x902 y259 w140 h20 , Original Scaling Algorithm :
+Gui, Add, DropDownList, x1042 y259 w220 h10 r10 vt_scale ggui_update, bilinear|bicubic|experimental|neighbor|area|bicublin|gauss|sinc|lanczos||spline|
+
+Gui, Add, button, x1162 y289 w100 h20 vb_start1 grun_test, Start
 
 ;==== Control ====
 GuiControl,,nlv%noise_level%, 1
@@ -491,7 +496,7 @@ run_test:
 			{
 				FileCreateDir, %out_path%%sub_dir%\%out_filename%
 			}
-			run_command := """" A_WorkingDir "\bin\ffmpeg.exe"" -i """ A_LoopFilePath """ " ff " -sws_flags spline """ out_path sub_dir "\" out_filename "\" out_filename "_spline.png"""
+			run_command := """" A_WorkingDir "\bin\ffmpeg.exe"" -i """ A_LoopFilePath """ " ff " -sws_flags " t_scale " """ out_path sub_dir "\" out_filename "\" out_filename "_" t_scale ".png"""
 			Run, %run_command%, ,%win_mode%
 			GuiControl,,l_com,%run_command%
 			
@@ -574,6 +579,9 @@ run_test:
 							GuiControl,,s_process_count%p_cycle%,%dv%
 							per := (p_count/m3)*100
 							GuiControl,,p_pro,%per%
+							per := Round(per,2)
+							GuiControl,,s_percen,%per%
+							
 
 							test_count += 1
 							if (test_count = 1)
@@ -586,7 +594,7 @@ run_test:
 							}
 							ElapsedTime := A_TickCount - StartTime
 							t_sec := ElapsedTime/1000
-							speed := (test_count-process_limit)/t_sec
+							speed := Round((test_count-process_limit)/t_sec,3)
 							GuiControl,,tspeed,%speed%
 							Break
 						}
@@ -642,6 +650,7 @@ run_start:
 	GuiControl,,f_pp,0
 	GuiControl,,tspeed,-
 	GuiControl,Disable,b_start
+	GuiControl,Disable,b_start1
 	GuiControl,Enabled,b_stop
 	
 	GuiControl,Disable,scale
@@ -817,6 +826,8 @@ run_start:
 					GuiControl,,s_process_count%p_cycle%,%dv%
 					per := (p_count/f_count)*100
 					GuiControl,,p_pro,%per%
+					per := Round(per,2)
+					GuiControl,,s_percen,%per%
 
 					test_count += 1
 					if (test_count = 1)
@@ -829,7 +840,7 @@ run_start:
 					}
 					ElapsedTime := A_TickCount - StartTime
 					t_sec := ElapsedTime/1000
-					speed := (test_count-process_limit)/t_sec
+					speed := Round((test_count-process_limit)/t_sec,3)
 					GuiControl,,tspeed,%speed%
 					Break
 				}
