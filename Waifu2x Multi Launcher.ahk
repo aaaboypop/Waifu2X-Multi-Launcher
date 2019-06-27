@@ -52,163 +52,140 @@ Loop, Files, %A_WorkingDir%\models\*info.json, FR
 
 StringReplace, model_list, model_list, |ukbench , , All
 
-; input/out path
-Gui, Add, Text, x12 y9 w80 h20 , Input Folder :
-Gui, Add, Edit, x102 y9 w180 h20 vin_path ggui_update, %in_path%
-Gui, Add, Text, x12 y29 w80 h20 , Output Folder :
-Gui, Add, Edit, x102 y29 w180 h20 vout_path ggui_update, %out_path%
+Gui, Add, Tab, x2 y0 w900 h570 , Launcher|Test Mode|Console Log
+Gui, Tab, Launcher
+Gui, Add, Text, x22 y29 w80 h20 , Input Folder :
+Gui, Add, Edit, x112 y29 w180 h20 vin_path ggui_update, %in_path%
+Gui, Add, Text, x22 y49 w80 h20 , Output Folder :
+Gui, Add, Edit, x112 y49 w180 h20 vout_path ggui_update, %out_path%
+Gui, Add, Text, x22 y169 w70 h20 , Noise Level :
+Gui, Add, Radio, x112 y169 w30 h20 vnlv0 Group ggui_update, 0
+Gui, Add, Radio, x152 y169 w30 h20 vnlv1 ggui_update, 1
+Gui, Add, Radio, x192 y169 w30 h20 vnlv2 ggui_update, 2
+Gui, Add, Radio, x232 y169 w30 h20 vnlv3 ggui_update, 3
+Gui, Add, Text, x22 y229 w90 h20 , File Extension :
+Gui, Add, DropDownList, x112 y229 w50 h21 vconfig_ext r11 ggui_update, .png|.bmp|.jpg||.jp2|.sr|.tif|.hdr|.exr|.ppm|.webp|.tga
+Gui, Add, CheckBox, x22 y289 w90 h20 vskip_exist Checked ggui_update, Skip Exist File
+Gui, Add, CheckBox, x182 y289 w70 h20 vth_enable Checked ggui_update, Thumbnail
+Gui, Add, Text, x22 y259 w40 h20 , Mode :
+Gui, Add, DropDownList, x112 y259 w50 h21 vwin_mode r6 ggui_update, |Max|Min|Hide||
+Gui, Add, Text, x202 y259 w40 h20 , Sleep :
+Gui, Add, DropDownList, x262 y259 w50 h21 vsleep_time r10 ggui_update, 10|20|50|100||200|333|500|1000
+Gui, Add, Text, x22 y199 w40 h20 , Model :
+Gui, Add, DropDownList, x112 y199 w180 h21 vmodel r10 ggui_update, %model_list%
+Gui, Add, Radio, x22 y79 w80 h20 Group vby_scale Checked ggui_update, Scale
+Gui, Add, Radio, x22 y99 w80 h20 vby_width ggui_update, Width
+Gui, Add, Radio, x22 y119 w80 h20 vby_height ggui_update, Height
+Gui, Add, Radio, x22 y139 w80 h20 vby_w_h ggui_update, Width*Height
+Gui, Add, Edit, x112 y79 w150 h20 vscale ggui_update, %scale%
+Gui, Add, Edit, x112 y99 w150 h20 vwidth ggui_update, %width%
+Gui, Add, Edit, x112 y119 w150 h20 vheight ggui_update, %height%
+Gui, Add, Edit, x112 y139 w80 h20 vwidth1 ggui_update, %width1%
+Gui, Add, Text, x202 y139 w10 h20 , x
+Gui, Add, Edit, x212 y139 w80 h20 vheight1 ggui_update, %height1%
+Gui, Add, GroupBox, x22 y319 w310 h110 , GPU Setting
+Gui, Add, CheckBox, x32 y339 w20 h20 venable_process1 checked ggui_update, 
+Gui, Add, Text, x52 y339 w60 h20 vtconfig_gpu1, Process 1 :
+Gui, Add, DropDownList, x112 y339 w50 h21 vconfig_gpu1 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x32 y359 w20 h20 venable_process2 ggui_update, 
+Gui, Add, Text, x52 y359 w60 h20 vtconfig_gpu2, Process 2 :
+Gui, Add, DropDownList, x112 y359 w50 h21 vconfig_gpu2 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x32 y379 w20 h20 venable_process3 ggui_update, 
+Gui, Add, Text, x52 y379 w60 h20 vtconfig_gpu3, Process 3 :
+Gui, Add, DropDownList, x112 y379 w50 h21 vconfig_gpu3 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x32 y399 w20 h20 venable_process4 ggui_update, 
+Gui, Add, Text, x52 y399 w60 h20 vtconfig_gpu4, Process 4 :
+Gui, Add, DropDownList, x112 y399 w50 h21 vconfig_gpu4 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x182 y339 w20 h20 venable_process5 ggui_update, 
+Gui, Add, Text, x202 y339 w60 h20 vtconfig_gpu5, Process 5 :
+Gui, Add, DropDownList, x262 y339 w50 h21 vconfig_gpu5 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x182 y359 w20 h20 venable_process6 ggui_update, 
+Gui, Add, Text, x202 y359 w60 h20 vtconfig_gpu6, Process 6 :
+Gui, Add, DropDownList, x262 y359 w50 h21 vconfig_gpu6 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x182 y379 w20 h20 venable_process7 ggui_update, 
+Gui, Add, Text, x202 y379 w60 h20 vtconfig_gpu7, Process 7 :
+Gui, Add, DropDownList, x262 y379 w50 h21 vconfig_gpu7 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x182 y399 w20 h20 venable_process8 ggui_update, 
+Gui, Add, Text, x202 y399 w60 h20 vtconfig_gpu8, Process 8 :
+Gui, Add, DropDownList, x262 y399 w50 h21 vconfig_gpu8 r8 ggui_update, 0||1|2|3|4|5|6|7
 
-; noise level config
-Gui, Add, Text, x12 y149 w70 h20 , Noise Level :
-Gui, Add, Radio, x102 y149 w30 h20 vnlv0 Group ggui_update, 0
-Gui, Add, Radio, x142 y149 w30 h20 vnlv1 ggui_update, 1
-Gui, Add, Radio, x182 y149 w30 h20 vnlv2 ggui_update, 2
-Gui, Add, Radio, x222 y149 w30 h20 vnlv3 ggui_update, 3
+Gui, Add, GroupBox, x342 y29 w550 h510 , Status
+Gui, Add, Text, x352 y49 w60 h20 , Total Files :
+Gui, Add, Text, x442 y49 w70 h20 vf_total, -
+Gui, Add, Text, x352 y69 w80 h20 , Processing Files :
+Gui, Add, Text, x442 y69 w70 h20 vf_pp, -
+Gui, Add, Text, x562 y49 w40 h20 , Speed :
+Gui, Add, Text, x612 y49 w60 h20 vtspeed, -
+Gui, Add, Text, x682 y49 w50 h20 , fps
+Gui, Add, Text, x562 y69 w40 h20 vs_percen, 
+Gui, Add, Progress, x352 y89 w530 h10 Border vp_pro, 0
+Gui, Add, Text, x352 y109 w80 h20 , Process 1 :
+Gui, Add, Text, x442 y109 w380 h20 vs_file_process1, -
+Gui, Add, Text, x832 y109 w50 h20 vs_process_count1, -
+Gui, Add, Text, x352 y129 w80 h20 , Process 2 :
+Gui, Add, Text, x442 y129 w380 h20 vs_file_process2, -
+Gui, Add, Text, x832 y129 w50 h20 vs_process_count2, -
+Gui, Add, Text, x352 y149 w80 h20 , Process 3 :
+Gui, Add, Text, x442 y149 w380 h20 vs_file_process3, -
+Gui, Add, Text, x832 y149 w50 h20 vs_process_count3, -
+Gui, Add, Text, x352 y169 w80 h20 , Process 4 :
+Gui, Add, Text, x442 y169 w380 h20 vs_file_process4, -
+Gui, Add, Text, x832 y169 w50 h20 vs_process_count4, -
+Gui, Add, Text, x352 y189 w80 h20 , Process 5 :
+Gui, Add, Text, x442 y189 w380 h20 vs_file_process5, -
+Gui, Add, Text, x832 y189 w50 h20 vs_process_count5, -
+Gui, Add, Text, x352 y209 w80 h20 , Process 6 :
+Gui, Add, Text, x442 y209 w380 h20 vs_file_process6, -
+Gui, Add, Text, x832 y209 w50 h20 vs_process_count6, -
+Gui, Add, Text, x352 y229 w80 h20 , Process 7 :
+Gui, Add, Text, x442 y229 w380 h20 vs_file_process7, -
+Gui, Add, Text, x832 y229 w50 h20 vs_process_count7, -
+Gui, Add, Text, x352 y249 w80 h20 , Process 8 :
+Gui, Add, Text, x442 y249 w380 h20 vs_file_process8, -
+Gui, Add, Text, x832 y249 w50 h20 vs_process_count8, -
+Gui, Add, Picture, x352 y279 w120 h120 vpic1, 
+Gui, Add, Picture, x482 y279 w120 h120 vpic2, 
+Gui, Add, Picture, x612 y279 w120 h120 vpic3, 
+Gui, Add, Picture, x742 y279 w120 h120 vpic4, 
+Gui, Add, Picture, x352 y409 w120 h120 vpic5, 
+Gui, Add, Picture, x482 y409 w120 h120 vpic6, 
+Gui, Add, Picture, x612 y409 w120 h120 vpic7, 
+Gui, Add, Picture, x742 y409 w120 h120 vpic8, 
+Gui, Add, Button, x292 y29 w30 h20 gin_folder, ...
+Gui, Add, Button, x292 y49 w30 h20 gout_folder, ...
+Gui, Add, button, x22 y529 w100 h20 vb_start grun_start, Start
+Gui, Add, button, x132 y529 w120 h20 vb_stop grun_stop Disabled, Stop
+Gui, Add, button, x262 y529 w70 h20 gsave, Save Setting
+Gui, Add, Text, x22 y509 w70 h20 vs_s, Ready ..
 
-; Splite Size
-;Gui, Add, CheckBox, x172 y209 w80 h20 vc_split ggui_update, Splite Size :
-;Gui, Add, Edit, x252 y209 w50 h20 vsplit_size ggui_update, 
 
-; file ext config
-Gui, Add, Text, x12 y209 w90 h20 , File Extension :
-Gui, Add, DropDownList, x102 y209 w50 h20 vconfig_ext r11 ggui_update, .png|.bmp|.jpg||.jp2|.sr|.tif|.hdr|.exr|.ppm|.webp|.tga
+Gui, Tab, Test Mode
+Gui, Add, GroupBox, x12 y29 w190 h200 , Model
+Gui, Add, CheckBox, x22 y49 w170 h20 vt_model1 ggui_update, anime_style_art
+Gui, Add, CheckBox, x22 y69 w170 h20 vt_model2 ggui_update, anime_style_art_rgb
+Gui, Add, CheckBox, x22 y89 w170 h20 vt_model3 ggui_update, cunet
+Gui, Add, CheckBox, x22 y109 w170 h20 vt_model4 ggui_update, photo
+Gui, Add, CheckBox, x22 y129 w170 h20 vt_model5 ggui_update, upconv_7_anime_style_art_rgb
+Gui, Add, CheckBox, x22 y149 w170 h20 vt_model6 ggui_update, upconv_7_photo
+Gui, Add, CheckBox, x22 y169 w170 h20 vt_model7 ggui_update, upresnet10
+Gui, Add, GroupBox, x202 y29 w190 h200 , Noise Level
+Gui, Add, CheckBox, x222 y49 w130 h20 vt_nlv0 ggui_update, Level 0
+Gui, Add, CheckBox, x222 y69 w130 h20 vt_nlv1 ggui_update, Level 1
+Gui, Add, CheckBox, x222 y89 w130 h20 vt_nlv2 ggui_update, Level 2
+Gui, Add, CheckBox, x222 y109 w130 h20 vt_nlv3 ggui_update, Level 3
+Gui, Add, Text, x22 y239 w140 h20 , Original Scaling Algorithm :
+Gui, Add, DropDownList, x162 y239 w220 h21 r10 vt_scale ggui_update, bilinear|bicubic|experimental|neighbor|area|bicublin|gauss|sinc|lanczos||spline|
+Gui, Add, button, x282 y269 w100 h20 vb_start1 grun_test, Start
+Gui, Add, button, x172 y269 w100 h20 vb_stop1 grun_stop Disabled, Stop
 
-; skip file
-Gui, Add, CheckBox, x12 y269 w90 h20 vskip_exist Checked ggui_update, Skip Exist File
-Gui, Add, CheckBox, x172 y269 w70 h20 vth_enable Checked ggui_update, Thumbnail
+Gui, Tab, Console Log
+Gui, Add, ListView, x12 y29 w880 h500 gconsole_log, Command
+Gui, Add, CheckBox, x12 y534 w100 h20 vlog_enable Checked ggui_update, Enable Log
+Gui, Add, Text, x142 y537 w60 h20 , Log Limit :
+Gui, Add, Edit, x202 y534 w60 h20 vlog_limit number ggui_update, 26
 
-; mode config
-Gui, Add, Text, x12 y239 w40 h20 , Mode :
-Gui, Add, DropDownList, x102 y239 w50 h20 vwin_mode r6 ggui_update, |Max|Min|Hide||
-Gui, Add, Text, x192 y239 w40 h20 , Sleep :
-Gui, Add, DropDownList, x252 y239 w50 h20 vsleep_time r10 ggui_update, 10|20|50|100||200|333|500|1000
-
-Gui, Add, Text, x12 y179 w40 h20 , Model :
-Gui, Add, DropDownList, x102 y179 w180 h20 vmodel r10 ggui_update, %model_list%
-
-; output scale config
-Gui, Add, Radio, x12 y59 w80 h20 Group vby_scale Checked ggui_update, Scale
-Gui, Add, Radio, x12 y79 w80 h20 vby_width ggui_update, Width
-Gui, Add, Radio, x12 y99 w80 h20 vby_height ggui_update, Height
-Gui, Add, Radio, x12 y119 w80 h20 vby_w_h ggui_update, Width*Height
-Gui, Add, Edit, x102 y59 w150 h20 vscale ggui_update, %scale%
-Gui, Add, Edit, x102 y79 w150 h20 vwidth ggui_update, %width%
-Gui, Add, Edit, x102 y99 w150 h20 vheight ggui_update, %height%
-Gui, Add, Edit, x102 y119 w80 h20 vwidth1 ggui_update, %width1%
-Gui, Add, Text, x192 y119 w10 h20, x
-Gui, Add, Edit, x202 y119 w80 h20 vheight1 ggui_update, %height1%
-
-; gpu config
-Gui, Add, GroupBox, x12 y299 w310 h110 , GPU Setting
-Gui, Add, CheckBox, x22 y319 w20 h20 venable_process1 checked ggui_update, 
-Gui, Add, Text, x42 y319 w60 h20 vtconfig_gpu1, Process 1 :
-Gui, Add, DropDownList, x102 y319 w50 h20 vconfig_gpu1 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x22 y339 w20 h20 venable_process2 ggui_update, 
-Gui, Add, Text, x42 y339 w60 h20 vtconfig_gpu2, Process 2 :
-Gui, Add, DropDownList, x102 y339 w50 h20 vconfig_gpu2 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x22 y359 w20 h20 venable_process3 ggui_update, 
-Gui, Add, Text, x42 y359 w60 h20 vtconfig_gpu3, Process 3 :
-Gui, Add, DropDownList, x102 y359 w50 h20 vconfig_gpu3 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x22 y379 w20 h20 venable_process4 ggui_update, 
-Gui, Add, Text, x42 y379 w60 h20 vtconfig_gpu4, Process 4 :
-Gui, Add, DropDownList, x102 y379 w50 h20 vconfig_gpu4 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x172 y319 w20 h20 venable_process5 ggui_update, 
-Gui, Add, Text, x192 y319 w60 h20 vtconfig_gpu5, Process 5 :
-Gui, Add, DropDownList, x252 y319 w50 h20 vconfig_gpu5 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x172 y339 w20 h20 venable_process6 ggui_update, 
-Gui, Add, Text, x192 y339 w60 h20 vtconfig_gpu6, Process 6 :
-Gui, Add, DropDownList, x252 y339 w50 h20 vconfig_gpu6 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x172 y359 w20 h20 venable_process7 ggui_update, 
-Gui, Add, Text, x192 y359 w60 h20 vtconfig_gpu7, Process 7 :
-Gui, Add, DropDownList, x252 y359 w50 h20 vconfig_gpu7 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x172 y379 w20 h20 venable_process8 ggui_update, 
-Gui, Add, Text, x192 y379 w60 h20 vtconfig_gpu8, Process 8 :
-Gui, Add, DropDownList, x252 y379 w50 h20 vconfig_gpu8 r8 ggui_update, 0||1|2|3|4|5|6|7
-
-; show command
-Gui, Add, Edit, x12 y409 w310 h80 -VScroll vl_com, 
-
-; status
-Gui, Add, GroupBox, x332 y9 w550 h510 , Status
-Gui, Add, Text, x342 y29 w60 h20 , Total Files :
-Gui, Add, Text, x432 y29 w70 h20 vf_total, -
-Gui, Add, Text, x342 y49 w80 h20 , Processing Files :
-Gui, Add, Text, x432 y49 w70 h20 vf_pp, -
-Gui, Add, Text, x552 y29 w40 h20 , Speed :
-Gui, Add, Text, x602 y29 w60 h20 vtspeed, -
-Gui, Add, Text, x672 y29 w50 h20 , fps
-Gui, Add, Text, x552 y49 w40 h20 vs_percen,
-
-Gui, Add, Progress, x342 y69 w530 h10 Border vp_pro, 0
-
-; process status
-Gui, Add, Text, x342 y89 w80 h20 , Process 1 :
-Gui, Add, Text, x432 y89 w380 h20 vs_file_process1, -
-Gui, Add, Text, x822 y89 w50 h20 vs_process_count1, -
-Gui, Add, Text, x342 y109 w80 h20 , Process 2 :
-Gui, Add, Text, x432 y109 w380 h20 vs_file_process2, -
-Gui, Add, Text, x822 y109 w50 h20 vs_process_count2, -
-Gui, Add, Text, x342 y129 w80 h20 , Process 3 :
-Gui, Add, Text, x432 y129 w380 h20 vs_file_process3, -
-Gui, Add, Text, x822 y129 w50 h20 vs_process_count3, -
-Gui, Add, Text, x342 y149 w80 h20 , Process 4 :
-Gui, Add, Text, x432 y149 w380 h20 vs_file_process4, -
-Gui, Add, Text, x822 y149 w50 h20 vs_process_count4, -
-Gui, Add, Text, x342 y169 w80 h20 , Process 5 :
-Gui, Add, Text, x432 y169 w380 h20 vs_file_process5, -
-Gui, Add, Text, x822 y169 w50 h20 vs_process_count5, -
-Gui, Add, Text, x342 y189 w80 h20 , Process 6 :
-Gui, Add, Text, x432 y189 w380 h20 vs_file_process6, -
-Gui, Add, Text, x822 y189 w50 h20 vs_process_count6, -
-Gui, Add, Text, x342 y209 w80 h20 , Process 7 :
-Gui, Add, Text, x432 y209 w380 h20 vs_file_process7, -
-Gui, Add, Text, x822 y209 w50 h20 vs_process_count7, -
-Gui, Add, Text, x342 y229 w80 h20 , Process 8 :
-Gui, Add, Text, x432 y229 w380 h20 vs_file_process8, -
-Gui, Add, Text, x822 y229 w50 h20 vs_process_count8, -
-
-; thumbnail
-Gui, Add, Picture, x342 y259 w120 h120 vpic1, 
-Gui, Add, Picture, x472 y259 w120 h120 vpic2, 
-Gui, Add, Picture, x602 y259 w120 h120 vpic3, 
-Gui, Add, Picture, x732 y259 w120 h120 vpic4, 
-Gui, Add, Picture, x342 y389 w120 h120 vpic5, 
-Gui, Add, Picture, x472 y389 w120 h120 vpic6, 
-Gui, Add, Picture, x602 y389 w120 h120 vpic7, 
-Gui, Add, Picture, x732 y389 w120 h120 vpic8, 
-
-; button
-Gui, Add, Button, x282 y9 w30 h20 gin_folder, ...
-Gui, Add, Button, x282 y29 w30 h20 gout_folder, ...
-Gui, Add, button, x12 y509 w100 h20 vb_start grun_start, Start
-Gui, Add, button, x122 y509 w120 h20 vb_stop grun_stop Disabled, Stop
-Gui, Add, button, x252 y509 w70 h20 gsave, Save Setting
-
-Gui, Add, Text, x12 y489 w70 h20 vs_s, Ready ..
-Gui, Add, Text, x1042 y519 w240 h20 , by pond_pop @ www.facebook.com/Net4Anime
-
-; test
-Gui, Add, GroupBox, x892 y19 w380 h300 , Test Mode
-Gui, Add, GroupBox, x892 y49 w190 h200 , Model
-
-Gui, Add, CheckBox, x902 y69 w170 h20 vt_model1 ggui_update, anime_style_art
-Gui, Add, CheckBox, x902 y89 w170 h20 vt_model2 ggui_update, anime_style_art_rgb
-Gui, Add, CheckBox, x902 y109 w170 h20 vt_model3 ggui_update, cunet
-Gui, Add, CheckBox, x902 y129 w170 h20 vt_model4 ggui_update, photo
-Gui, Add, CheckBox, x902 y149 w170 h20 vt_model5 ggui_update, upconv_7_anime_style_art_rgb
-Gui, Add, CheckBox, x902 y169 w170 h20 vt_model6 ggui_update, upconv_7_photo
-Gui, Add, CheckBox, x902 y189 w170 h20 vt_model7 ggui_update, upresnet10
-
-Gui, Add, GroupBox, x1082 y49 w190 h200 , Noise Level
-Gui, Add, CheckBox, x1102 y69 w130 h20 vt_nlv0 ggui_update, Level 0
-Gui, Add, CheckBox, x1102 y89 w130 h20 vt_nlv1 ggui_update, Level 1
-Gui, Add, CheckBox, x1102 y109 w130 h20 vt_nlv2 ggui_update, Level 2
-Gui, Add, CheckBox, x1102 y129 w130 h20 vt_nlv3 ggui_update, Level 3
-
-Gui, Add, Text, x902 y259 w140 h20 , Original Scaling Algorithm :
-Gui, Add, DropDownList, x1042 y259 w220 h10 r10 vt_scale ggui_update, bilinear|bicubic|experimental|neighbor|area|bicublin|gauss|sinc|lanczos||spline|
-
-Gui, Add, button, x1162 y289 w100 h20 vb_start1 grun_test, Start
+Gui, Tab, 
+Gui, Add, Text, x652 y539 w240 h20 , by pond_pop @ www.facebook.com/Net4Anime
 
 ;==== Control ====
 GuiControl,,nlv%noise_level%, 1
@@ -232,10 +209,16 @@ while(i<=8)
 }
 
 ;==== GUI Window ====
-Gui, Show, x413 y187 h547 w1284, Waifu2x Multi Launcher
+Gui, Show, x413 y187 h560 w900, Waifu2x Multi Launcher
 goto, gui_update
 Return
-
+console_log:
+{
+	LastEventInfo := LV_GetNext(0, "F")
+	LV_GetText(var1, LastEventInfo, 1)
+	
+	clipboard := var1
+}
 
 gui_update:
 {
@@ -340,6 +323,8 @@ save:
 		IniWrite, %var2%, %A_WorkingDir%\setting.ini, main, enable_process%i%
 		i++
 	}
+	ToolTip, Setting is Saved
+	SetTimer, RemoveToolTip, -3000
 }
 return
 
@@ -358,6 +343,46 @@ out_folder:
 	FileSelectFolder, out_path,, 3
 	Thread, NoTimers, false
 	GuiControl,,out_path,%out_path%
+}
+Return
+
+RemoveToolTip:
+ToolTip
+return
+
+log_console:
+{
+	while(LV_GetCount() >= log_limit)
+	{
+		LV_Delete(1)
+	}
+	LV_Add("", run_command)
+}
+Return
+
+load_img:
+{
+	imagefile := A_LoopFilePath
+	GDIPToken := Gdip_Startup()                                     
+	pBM := Gdip_CreateBitmapFromFile( imagefile )
+	img_w:= Gdip_GetImageWidth( pBM )
+	img_h:= Gdip_GetImageHeight( pBM )   
+	Gdip_DisposeImage( pBM )
+	Gdip_Shutdown( GDIPToken ) 
+
+	if(img_w>img_h)
+	{
+		p_ratio := Floor(thumbnail_max_size/(img_w/img_h))
+		GuiControl,,pic%p_cycle%,%imagefile%
+		GuiControl, MoveDraw, pic%p_cycle%, w%thumbnail_max_size% h%p_ratio%
+	}
+	else
+	{
+		p_ratio := Floor(thumbnail_max_size/(img_h/img_w))
+		GuiControl,,pic%p_cycle%,%imagefile%
+		GuiControl, MoveDraw, pic%p_cycle%, w%p_ratio% h%thumbnail_max_size%
+	}
+	GuiControl,Show,pic%p_cycle%
 }
 Return
 
@@ -387,6 +412,7 @@ run_test:
 	GuiControl,Disable,b_start
 	GuiControl,Disable,b_start1
 	GuiControl,Enabled,b_stop
+	GuiControl,Enabled,b_stop1
 	
 	GuiControl,Disable,scale
 	GuiControl,Disable,width
@@ -548,31 +574,14 @@ run_test:
 							noise_level1 := m2_cycle
 							run_command := """" A_WorkingDir "\waifu2x-caffe-cui-p" p_cycle ".exe"" --gpu " gpu_select " -p cudnn " attribute1 attribute2 " -n " noise_level1 " -m noise_scale -i """ A_LoopFilePath """ -o """ out_path sub_dir "\" out_filename "\" out_filename1 config_ext """"
 							Run, %run_command%, ,%win_mode%
-							GuiControl,,l_com,%run_command%
+							if(log_enable = 1)
+							{
+								gosub,log_console
+							}
 							GuiControl,,s_file_process%p_cycle%,%A_LoopFilePath%
 							if(th_enable = 1)
 							{
-								imagefile := A_LoopFilePath
-								GDIPToken := Gdip_Startup()                                     
-								pBM := Gdip_CreateBitmapFromFile( imagefile )
-								img_w:= Gdip_GetImageWidth( pBM )
-								img_h:= Gdip_GetImageHeight( pBM )   
-								Gdip_DisposeImage( pBM )
-								Gdip_Shutdown( GDIPToken ) 
-
-								if(img_w>img_h)
-								{
-									p_ratio := Floor(thumbnail_max_size/(img_w/img_h))
-									GuiControl,,pic%p_cycle%,%imagefile%
-									GuiControl, MoveDraw, pic%p_cycle%, w%thumbnail_max_size% h%p_ratio%
-								}
-								else
-								{
-									p_ratio := Floor(thumbnail_max_size/(img_h/img_w))
-									GuiControl,,pic%p_cycle%,%imagefile%
-									GuiControl, MoveDraw, pic%p_cycle%, w%p_ratio% h%thumbnail_max_size%
-								}
-								GuiControl,Show,pic%p_cycle%
+								gosub, load_img
 							}
 							s_process_count%p_cycle% += 1
 							dv := s_process_count%p_cycle%
@@ -610,6 +619,7 @@ run_test:
 	GuiControl,Enabled,b_start
 	GuiControl,Enabled,b_start1
 	GuiControl,Disable,b_stop
+	GuiControl,Disable,b_stop1
 	
 	if(stop = 1)
 	{
@@ -652,6 +662,7 @@ run_start:
 	GuiControl,Disable,b_start
 	GuiControl,Disable,b_start1
 	GuiControl,Enabled,b_stop
+	GuiControl,Enabled,b_stop1
 	
 	GuiControl,Disable,scale
 	GuiControl,Disable,width
@@ -795,31 +806,14 @@ run_start:
 
 					run_command := """" A_WorkingDir "\waifu2x-caffe-cui-p" p_cycle ".exe"" --gpu " gpu_select " -p cudnn " attribute1 attribute2 " -n " noise_level " -m noise_scale -i """ A_LoopFilePath """ -o """ out_path sub_dir "\" out_filename config_ext """"
 					Run, %run_command%, ,%win_mode%
-					GuiControl,,l_com,%run_command%
+					if(log_enable = 1)
+					{
+						gosub,log_console
+					}
 					GuiControl,,s_file_process%p_cycle%,%A_LoopFilePath%
 					if(th_enable = 1)
 					{
-						imagefile := A_LoopFilePath
-						GDIPToken := Gdip_Startup()                                     
-						pBM := Gdip_CreateBitmapFromFile( imagefile )
-						img_w:= Gdip_GetImageWidth( pBM )
-						img_h:= Gdip_GetImageHeight( pBM )   
-						Gdip_DisposeImage( pBM )
-						Gdip_Shutdown( GDIPToken ) 
-
-						if(img_w>img_h)
-						{
-							p_ratio := Floor(thumbnail_max_size/(img_w/img_h))
-							GuiControl,,pic%p_cycle%,%imagefile%
-							GuiControl, MoveDraw, pic%p_cycle%, w%thumbnail_max_size% h%p_ratio%
-						}
-						else
-						{
-							p_ratio := Floor(thumbnail_max_size/(img_h/img_w))
-							GuiControl,,pic%p_cycle%,%imagefile%
-							GuiControl, MoveDraw, pic%p_cycle%, w%p_ratio% h%thumbnail_max_size%
-						}
-						GuiControl,Show,pic%p_cycle%
+						gosub, load_img
 					}
 					s_process_count%p_cycle% += 1
 					dv := s_process_count%p_cycle%
@@ -849,7 +843,9 @@ run_start:
 	}
 	GuiControl,,f_pp,%p_count%
 	GuiControl,Enabled,b_start
+	GuiControl,Enabled,b_start1
 	GuiControl,Disable,b_stop
+	GuiControl,Disable,b_stop1
 	
 	if(stop = 1)
 	{
