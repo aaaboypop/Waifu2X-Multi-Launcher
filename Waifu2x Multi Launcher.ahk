@@ -21,13 +21,34 @@ IniRead, width, %A_WorkingDir%\setting.ini, main, width, %A_Space%
 IniRead, height, %A_WorkingDir%\setting.ini, main, height, %A_Space%
 IniRead, width1, %A_WorkingDir%\setting.ini, main, width1, %A_Space%
 IniRead, height1, %A_WorkingDir%\setting.ini, main, height1, %A_Space%
-IniRead, by_scale, %A_WorkingDir%\setting.ini, main, by_scale, 0
+IniRead, by_scale, %A_WorkingDir%\setting.ini, main, by_scale, 1
 IniRead, by_width, %A_WorkingDir%\setting.ini, main, by_width, 0
 IniRead, by_height, %A_WorkingDir%\setting.ini, main, by_height, 0
 IniRead, by_w_h, %A_WorkingDir%\setting.ini, main, by_w_h, 0
 IniRead, skip_exist, %A_WorkingDir%\setting.ini, main, skip_exist, 1
 IniRead, th_enable, %A_WorkingDir%\setting.ini, main, th_enable, 1
 IniRead, sleep_time, %A_WorkingDir%\setting.ini, main, sleep_time, 100
+IniRead, mode1, %A_WorkingDir%\setting.ini, main, mode1, 1
+IniRead, mode2, %A_WorkingDir%\setting.ini, main, mode2, 0
+IniRead, mode3, %A_WorkingDir%\setting.ini, main, mode3, 0
+IniRead, mode4, %A_WorkingDir%\setting.ini, main, mode4, 0
+IniRead, t_scale, %A_WorkingDir%\setting.ini, main, t_scale, lanczos
+IniRead, log_enable, %A_WorkingDir%\setting.ini, main, log_enable, 1
+IniRead, log_limit, %A_WorkingDir%\setting.ini, main, log_limit, 26
+
+i:=0
+while(i<=3)
+{
+	IniRead, t_nlv%i%, %A_WorkingDir%\setting.ini, main, t_nlv%i%, 0
+	i++
+}
+
+i:=1
+while(i<=7)
+{
+	IniRead, t_model%i%, %A_WorkingDir%\setting.ini, main, t_model%i%, 0
+	i++
+}
 
 i:=1
 while(i<=8)
@@ -58,56 +79,62 @@ Gui, Add, Text, x22 y29 w80 h20 , Input Folder :
 Gui, Add, Edit, x112 y29 w180 h20 vin_path ggui_update, %in_path%
 Gui, Add, Text, x22 y49 w80 h20 , Output Folder :
 Gui, Add, Edit, x112 y49 w180 h20 vout_path ggui_update, %out_path%
-Gui, Add, Text, x22 y169 w70 h20 , Noise Level :
-Gui, Add, Radio, x112 y169 w30 h20 vnlv0 Group ggui_update, 0
-Gui, Add, Radio, x152 y169 w30 h20 vnlv1 ggui_update, 1
-Gui, Add, Radio, x192 y169 w30 h20 vnlv2 ggui_update, 2
-Gui, Add, Radio, x232 y169 w30 h20 vnlv3 ggui_update, 3
-Gui, Add, Text, x22 y229 w90 h20 , File Extension :
-Gui, Add, DropDownList, x112 y229 w50 h21 vconfig_ext r11 ggui_update, .png|.bmp|.jpg||.jp2|.sr|.tif|.hdr|.exr|.ppm|.webp|.tga
-Gui, Add, CheckBox, x22 y289 w90 h20 vskip_exist Checked ggui_update, Skip Exist File
-Gui, Add, CheckBox, x182 y289 w70 h20 vth_enable Checked ggui_update, Thumbnail
-Gui, Add, Text, x22 y259 w40 h20 , Mode :
-Gui, Add, DropDownList, x112 y259 w50 h21 vwin_mode r6 ggui_update, |Max|Min|Hide||
-Gui, Add, Text, x202 y259 w40 h20 , Sleep :
-Gui, Add, DropDownList, x262 y259 w50 h21 vsleep_time r10 ggui_update, 10|20|50|100||200|333|500|1000
-Gui, Add, Text, x22 y199 w40 h20 , Model :
-Gui, Add, DropDownList, x112 y199 w180 h21 vmodel r10 ggui_update, %model_list%
-Gui, Add, Radio, x22 y79 w80 h20 Group vby_scale Checked ggui_update, Scale
-Gui, Add, Radio, x22 y99 w80 h20 vby_width ggui_update, Width
-Gui, Add, Radio, x22 y119 w80 h20 vby_height ggui_update, Height
-Gui, Add, Radio, x22 y139 w80 h20 vby_w_h ggui_update, Width*Height
-Gui, Add, Edit, x112 y79 w150 h20 vscale ggui_update, %scale%
-Gui, Add, Edit, x112 y99 w150 h20 vwidth ggui_update, %width%
-Gui, Add, Edit, x112 y119 w150 h20 vheight ggui_update, %height%
-Gui, Add, Edit, x112 y139 w80 h20 vwidth1 ggui_update, %width1%
-Gui, Add, Text, x202 y139 w10 h20 , x
-Gui, Add, Edit, x212 y139 w80 h20 vheight1 ggui_update, %height1%
-Gui, Add, GroupBox, x22 y319 w310 h110 , GPU Setting
-Gui, Add, CheckBox, x32 y339 w20 h20 venable_process1 checked ggui_update, 
-Gui, Add, Text, x52 y339 w60 h20 vtconfig_gpu1, Process 1 :
-Gui, Add, DropDownList, x112 y339 w50 h21 vconfig_gpu1 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x32 y359 w20 h20 venable_process2 ggui_update, 
-Gui, Add, Text, x52 y359 w60 h20 vtconfig_gpu2, Process 2 :
-Gui, Add, DropDownList, x112 y359 w50 h21 vconfig_gpu2 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x32 y379 w20 h20 venable_process3 ggui_update, 
-Gui, Add, Text, x52 y379 w60 h20 vtconfig_gpu3, Process 3 :
-Gui, Add, DropDownList, x112 y379 w50 h21 vconfig_gpu3 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x32 y399 w20 h20 venable_process4 ggui_update, 
-Gui, Add, Text, x52 y399 w60 h20 vtconfig_gpu4, Process 4 :
-Gui, Add, DropDownList, x112 y399 w50 h21 vconfig_gpu4 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x182 y339 w20 h20 venable_process5 ggui_update, 
-Gui, Add, Text, x202 y339 w60 h20 vtconfig_gpu5, Process 5 :
-Gui, Add, DropDownList, x262 y339 w50 h21 vconfig_gpu5 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x182 y359 w20 h20 venable_process6 ggui_update, 
-Gui, Add, Text, x202 y359 w60 h20 vtconfig_gpu6, Process 6 :
-Gui, Add, DropDownList, x262 y359 w50 h21 vconfig_gpu6 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x182 y379 w20 h20 venable_process7 ggui_update, 
-Gui, Add, Text, x202 y379 w60 h20 vtconfig_gpu7, Process 7 :
-Gui, Add, DropDownList, x262 y379 w50 h21 vconfig_gpu7 r8 ggui_update, 0||1|2|3|4|5|6|7
-Gui, Add, CheckBox, x182 y399 w20 h20 venable_process8 ggui_update, 
-Gui, Add, Text, x202 y399 w60 h20 vtconfig_gpu8, Process 8 :
-Gui, Add, DropDownList, x262 y399 w50 h21 vconfig_gpu8 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, GroupBox, x22 y79 w310 h70 , Conversion Mode
+Gui, Add, Radio, x32 y99 w140 h20 vmode1 Group ggui_update, Denoise+Magnify
+Gui, Add, Radio, x182 y99 w140 h20 vmode2 ggui_update, Magnify
+Gui, Add, Radio, x32 y119 w140 h20 vmode3 ggui_update, Denoise
+Gui, Add, Radio, x182 y119 w140 h20 vmode4 ggui_update, Magnify+AutoDenoise
+
+Gui, Add, Radio, x22 y159 w80 h20 Group vby_scale Checked ggui_update, Scale
+Gui, Add, Radio, x22 y179 w80 h20 vby_width ggui_update, Width
+Gui, Add, Radio, x22 y199 w80 h20 vby_height ggui_update, Height
+Gui, Add, Radio, x22 y219 w80 h20 vby_w_h ggui_update, Width*Height
+Gui, Add, Edit, x112 y159 w150 h20 vscale ggui_update, %scale%
+Gui, Add, Edit, x112 y179 w150 h20 vwidth ggui_update, %width%
+Gui, Add, Edit, x112 y199 w150 h20 vheight ggui_update, %height%
+Gui, Add, Edit, x112 y219 w80 h20 vwidth1 ggui_update, %width1%
+Gui, Add, Text, x202 y219 w10 h20 , x
+Gui, Add, Edit, x212 y219 w80 h20 vheight1 ggui_update, %height1%
+Gui, Add, Text, x22 y249 w70 h20 , Noise Level :
+Gui, Add, Radio, x112 y249 w30 h20 vnlv0 Group ggui_update, 0
+Gui, Add, Radio, x152 y249 w30 h20 vnlv1 ggui_update, 1
+Gui, Add, Radio, x192 y249 w30 h20 vnlv2 ggui_update, 2
+Gui, Add, Radio, x232 y249 w30 h20 vnlv3 ggui_update, 3
+Gui, Add, Text, x22 y279 w40 h20 , Model :
+Gui, Add, DropDownList, x112 y279 w180 h21 vmodel r10 ggui_update, %model_list%
+Gui, Add, Text, x22 y309 w90 h20 , File Extension :
+Gui, Add, DropDownList, x112 y309 w50 h21 vconfig_ext r11 ggui_update, .png|.bmp|.jpg||.jp2|.sr|.tif|.hdr|.exr|.ppm|.webp|.tga
+Gui, Add, Text, x22 y339 w40 h20 , Mode :
+Gui, Add, DropDownList, x112 y339 w50 h21 vwin_mode r6 ggui_update, |Max|Min|Hide||
+Gui, Add, Text, x202 y339 w40 h20 , Sleep :
+Gui, Add, DropDownList, x262 y339 w50 h21 vsleep_time r10 ggui_update, 10|20|50|100||200|333|500|1000
+Gui, Add, CheckBox, x22 y369 w90 h20 vskip_exist Checked ggui_update, Skip Exist File
+Gui, Add, CheckBox, x182 y369 w70 h20 vth_enable Checked ggui_update, Thumbnail
+Gui, Add, GroupBox, x22 y399 w310 h110 , GPU Setting
+Gui, Add, CheckBox, x32 y419 w20 h20 venable_process1 checked ggui_update, 
+Gui, Add, Text, x52 y419 w60 h20 vtconfig_gpu1, Process 1 :
+Gui, Add, DropDownList, x112 y419 w50 h21 vconfig_gpu1 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x32 y439 w20 h20 venable_process2 ggui_update, 
+Gui, Add, Text, x52 y439 w60 h20 vtconfig_gpu2, Process 2 :
+Gui, Add, DropDownList, x112 y439 w50 h21 vconfig_gpu2 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x32 y459 w20 h20 venable_process3 ggui_update, 
+Gui, Add, Text, x52 y459 w60 h20 vtconfig_gpu3, Process 3 :
+Gui, Add, DropDownList, x112 y459 w50 h21 vconfig_gpu3 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x32 y479 w20 h20 venable_process4 ggui_update, 
+Gui, Add, Text, x52 y479 w60 h20 vtconfig_gpu4, Process 4 :
+Gui, Add, DropDownList, x112 y479 w50 h21 vconfig_gpu4 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x182 y419 w20 h20 venable_process5 ggui_update, 
+Gui, Add, Text, x202 y419 w60 h20 vtconfig_gpu5, Process 5 :
+Gui, Add, DropDownList, x262 y419 w50 h21 vconfig_gpu5 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x182 y439 w20 h20 venable_process6 ggui_update, 
+Gui, Add, Text, x202 y439 w60 h20 vtconfig_gpu6, Process 6 :
+Gui, Add, DropDownList, x262 y439 w50 h21 vconfig_gpu6 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x182 y459 w20 h20 venable_process7 ggui_update, 
+Gui, Add, Text, x202 y459 w60 h20 vtconfig_gpu7, Process 7 :
+Gui, Add, DropDownList, x262 y459 w50 h21 vconfig_gpu7 r8 ggui_update, 0||1|2|3|4|5|6|7
+Gui, Add, CheckBox, x182 y479 w20 h20 venable_process8 ggui_update, 
+Gui, Add, Text, x202 y479 w60 h20 vtconfig_gpu8, Process 8 :
+Gui, Add, DropDownList, x262 y479 w50 h21 vconfig_gpu8 r8 ggui_update, 0||1|2|3|4|5|6|7
 
 Gui, Add, GroupBox, x342 y29 w550 h510 , Status
 Gui, Add, Text, x352 y49 w60 h20 , Total Files :
@@ -174,7 +201,7 @@ Gui, Add, CheckBox, x222 y69 w130 h20 vt_nlv1 ggui_update, Level 1
 Gui, Add, CheckBox, x222 y89 w130 h20 vt_nlv2 ggui_update, Level 2
 Gui, Add, CheckBox, x222 y109 w130 h20 vt_nlv3 ggui_update, Level 3
 Gui, Add, Text, x22 y239 w140 h20 , Original Scaling Algorithm :
-Gui, Add, DropDownList, x162 y239 w220 h21 r10 vt_scale ggui_update, bilinear|bicubic|experimental|neighbor|area|bicublin|gauss|sinc|lanczos||spline|
+Gui, Add, DropDownList, x162 y239 w220 h21 r10 vt_scale ggui_update, bilinear|bicubic|experimental|neighbor|area|bicublin|gauss|sinc|lanczos|spline|
 Gui, Add, button, x282 y269 w100 h20 vb_start1 grun_test, Start
 Gui, Add, button, x172 y269 w100 h20 vb_stop1 grun_stop Disabled, Stop
 
@@ -189,6 +216,7 @@ Gui, Add, Text, x652 y539 w240 h20 , by pond_pop @ www.facebook.com/Net4Anime
 
 ;==== Control ====
 GuiControl,,nlv%noise_level%, 1
+GuiControl,,log_enable,% log_enable
 GuiControl, Hide,mgpu_text
 GuiControl, ChooseString, config_ext, %config_ext%
 GuiControl, ChooseString, model, %model%
@@ -199,13 +227,52 @@ GuiControl,,by_scale, %by_scale%
 GuiControl,,by_width, %by_width%
 GuiControl,,by_height, %by_height%
 GuiControl,,by_w_h, %by_w_h%
-
+GuiControl,,log_limit, %log_limit%
+GuiControl, ChooseString, t_scale,% t_scale
 i:=1
 while(i<=8)
 {
 	GuiControl, ChooseString, config_gpu%i%,% config_gpu%i%
 	GuiControl,,enable_process%i%,% enable_process%i%
 	i++
+}
+
+i:=1
+while(i<=7)
+{
+	if(t_model%i% = 1)
+	{
+		GuiControl,,t_model%i%, 1
+	}
+	else
+	{
+		GuiControl,,t_model%i%, 0
+	}
+	i++
+}
+
+i:=0
+while(i<=3)
+{
+	if(t_nlv%i% = 1)
+	{
+		GuiControl,,t_nlv%i%, 1
+	}
+	else
+	{
+		GuiControl,,t_nlv%i%, 0
+	}
+	
+	i++
+	
+	if(mode%i% = 1)
+	{
+		GuiControl,,mode%i%, 1
+	}
+	else
+	{
+		GuiControl,,mode%i%, 0
+	}
 }
 
 ;==== GUI Window ====
@@ -288,7 +355,24 @@ gui_update:
 		GuiControl,Enabled,width1
 		GuiControl,Enabled,height1
 	}
-
+	
+	if(mode1 = 1)
+	{
+		mode_select := "noise_scale"
+	}
+	else if(mode2 = 1)
+	{
+		mode_select := "scale"
+	}
+	else if(mode3 = 1)
+	{
+		mode_select := "noise"
+	}
+	else
+	{
+		mode_select := "auto_scale"
+	}
+	
 }
 return
 
@@ -313,6 +397,27 @@ save:
 	IniWrite, %th_enable%, %A_WorkingDir%\setting.ini, main, th_enable
 	IniWrite, %sleep_time%, %A_WorkingDir%\setting.ini, main, sleep_time
 	IniWrite, %split_size%, %A_WorkingDir%\setting.ini, main, split_size
+	IniWrite, %t_scale%, %A_WorkingDir%\setting.ini, main, t_scale
+	IniWrite, %log_enable%, %A_WorkingDir%\setting.ini, main, log_enable
+	IniWrite, %log_limit%, %A_WorkingDir%\setting.ini, main, log_limit
+	
+	i:=0
+	while(i<=3)
+	{
+		var1 := t_nlv%i%
+		IniWrite, %var1%, %A_WorkingDir%\setting.ini, main, t_nlv%i%
+		i++
+		var2 := mode%i%
+		IniWrite, %var2%, %A_WorkingDir%\setting.ini, main, mode%i%
+	}
+	
+	i:=1
+	while(i<=7)
+	{
+		var1 := t_model%i%
+		IniWrite, %var1%, %A_WorkingDir%\setting.ini, main, t_model%i%
+		i++
+	}
 	
 	i:=1
 	while(i<=8)
@@ -386,6 +491,61 @@ load_img:
 }
 Return
 
+scale_select:
+{
+	if(mode3 = 1)
+	{
+		attribute1 := ""
+		ff := ""
+	}
+	else if(by_scale = 1)
+	{
+		if scale is alpha
+		{
+			msgbox, Scale must not alphabetic characters
+			stop := 1
+		}
+		attribute1 := "-s " scale
+		ff := "-vf scale=iw*" scale ":ih*" scale
+	}
+	else if(by_width = 1)
+	{
+		if width is alpha
+		{
+			msgbox, Width must not alphabetic characters
+			stop := 1
+		}
+		attribute1 := "-w " width
+		ff := "-vf scale=" width ":-1"
+	}
+	else if(by_height = 1)
+	{
+		if height is alpha
+		{
+			msgbox, Height must not alphabetic characters
+			stop := 1
+		}
+		attribute1 := "-h " height
+		ff := "-vf scale=-1:"height
+	}
+	else if(by_w_h = 1)
+	{
+		if width1 is alpha
+		{
+			msgbox, Width1 must not alphabetic characters
+			stop := 1
+		}
+		if height1 is alpha
+		{
+			msgbox, Height1 must not alphabetic characters
+			stop := 1
+		}
+		attribute1 := "-w " width1 " -h " height1
+		ff := "-vf scale=" width1 ":" height1
+	}
+}
+Return
+
 run_test:
 {
 	i:=1
@@ -420,51 +580,7 @@ run_test:
 	GuiControl,Disable,width1
 	GuiControl,Disable,height1
 	
-	if(by_scale = 1)
-	{
-		if scale is alpha
-		{
-			msgbox, Scale must not alphabetic characters
-			stop := 1
-		}
-		attribute1 := "-s " scale
-		ff := "-vf scale=iw*" scale ":ih*" scale
-	}
-	else if(by_width = 1)
-	{
-		if width is alpha
-		{
-			msgbox, Width must not alphabetic characters
-			stop := 1
-		}
-		attribute1 := "-w " width
-		ff := "-vf scale=" width ":-1"
-	}
-	else if(by_height = 1)
-	{
-		if height is alpha
-		{
-			msgbox, Height must not alphabetic characters
-			stop := 1
-		}
-		attribute1 := "-h " height
-		ff := "-vf scale=-1:"height
-	}
-	else
-	{
-		if width1 is alpha
-		{
-			msgbox, Width1 must not alphabetic characters
-			stop := 1
-		}
-		if height1 is alpha
-		{
-			msgbox, Height1 must not alphabetic characters
-			stop := 1
-		}
-		attribute1 := "-w " width1 " -h " height1
-		ff := "-vf scale=" width1 ":" height1
-	}
+	gosub,scale_select
 	
 	Loop, Files, %in_path%\*.*, FR
 	{
@@ -518,7 +634,12 @@ run_test:
 				StringTrimRight, out_filename, A_LoopFileName, 4
 			}
 			
-			IfNotExist, %out_path%%sub_dir%\%out_filename%
+			if(out_path = "")
+			{
+				out_path := in_path
+			}
+			
+			else IfNotExist, %out_path%%sub_dir%\%out_filename%
 			{
 				FileCreateDir, %out_path%%sub_dir%\%out_filename%
 			}
@@ -572,7 +693,7 @@ run_test:
 							out_filename1 := out_filename "(" model_name%m1_cycle% ")_noise_level_" m2_cycle
 							attribute2 := " --model_dir """ A_WorkingDir "\models\" model_name%m1_cycle% """"
 							noise_level1 := m2_cycle
-							run_command := """" A_WorkingDir "\waifu2x-caffe-cui-p" p_cycle ".exe"" --gpu " gpu_select " -p cudnn " attribute1 attribute2 " -n " noise_level1 " -m noise_scale -i """ A_LoopFilePath """ -o """ out_path sub_dir "\" out_filename "\" out_filename1 config_ext """"
+							run_command := """" A_WorkingDir "\waifu2x-caffe-cui-p" p_cycle ".exe"" --gpu " gpu_select " -p cudnn " attribute1 attribute2 " -n " noise_level1 " -m " mode_select " -i """ A_LoopFilePath """ -o """ out_path sub_dir "\" out_filename "\" out_filename1 config_ext """"
 							Run, %run_command%, ,%win_mode%
 							if(log_enable = 1)
 							{
@@ -670,47 +791,7 @@ run_start:
 	GuiControl,Disable,width1
 	GuiControl,Disable,height1
 	
-	if(by_scale = 1)
-	{
-		if scale is alpha
-		{
-			msgbox, Scale must not alphabetic characters
-			stop := 1
-		}
-		attribute1 := "-s " scale
-	}
-	else if(by_width = 1)
-	{
-		if width is alpha
-		{
-			msgbox, Width must not alphabetic characters
-			stop := 1
-		}
-		attribute1 := "-w " width
-	}
-	else if(by_height = 1)
-	{
-		if height is alpha
-		{
-			msgbox, Height must not alphabetic characters
-			stop := 1
-		}
-		attribute1 := "-h " height
-	}
-	else
-	{
-		if width1 is alpha
-		{
-			msgbox, Width1 must not alphabetic characters
-			stop := 1
-		}
-		if height1 is alpha
-		{
-			msgbox, Height1 must not alphabetic characters
-			stop := 1
-		}
-		attribute1 := "-w " width1 " -h " height1
-	}
+	gosub,scale_select
 	
 	Loop, Files, %in_path%\*.*, FR
 	{
@@ -751,29 +832,41 @@ run_start:
 				StringTrimRight, out_filename, A_LoopFileName, 4
 			}
 			
+
 			
 			p_count += 1
-			if skip_exist = 1
+			
+			if(out_path = "")
 			{
-				IfExist, %out_path%%sub_dir%\%out_filename%%config_ext%
-				{
-					last_files_skiping += 1
-					if(last_files_skiping = 1)
-					{
-						GuiControl,,f_pp,Skipping..
-					}
-					Continue
-				}
-				else
-				{
-					last_files_skiping := 0
-					GuiControl,,f_pp,%p_count%
-				}
+				out_path := in_path
+				out_file_config := ""
 			}
 			else
 			{
-				GuiControl,,f_pp,%p_count%
+				out_file_config := " -o """ out_path sub_dir "\" out_filename config_ext """"
+				if skip_exist = 1
+				{
+					IfExist, %out_path%%sub_dir%\%out_filename%%config_ext%
+					{
+						last_files_skiping += 1
+						if(last_files_skiping = 1)
+						{
+							GuiControl,,f_pp,Skipping..
+						}
+						Continue
+					}
+					else
+					{
+						last_files_skiping := 0
+						GuiControl,,f_pp,%p_count%
+					}
+				}
+				else
+				{
+					GuiControl,,f_pp,%p_count%
+				}
 			}
+
 
 			Loop
 			{	
@@ -804,7 +897,7 @@ run_start:
 					}
 					gpu_select := config_gpu%p_cycle%
 
-					run_command := """" A_WorkingDir "\waifu2x-caffe-cui-p" p_cycle ".exe"" --gpu " gpu_select " -p cudnn " attribute1 attribute2 " -n " noise_level " -m noise_scale -i """ A_LoopFilePath """ -o """ out_path sub_dir "\" out_filename config_ext """"
+					run_command := """" A_WorkingDir "\waifu2x-caffe-cui-p" p_cycle ".exe"" --gpu " gpu_select " -p cudnn " attribute1 attribute2 " -n " noise_level " -m " mode_select " -i """ A_LoopFilePath """ " out_file_config
 					Run, %run_command%, ,%win_mode%
 					if(log_enable = 1)
 					{
